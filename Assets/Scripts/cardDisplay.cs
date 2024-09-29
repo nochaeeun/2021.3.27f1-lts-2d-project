@@ -24,9 +24,11 @@ public class cardDisplay : MonoBehaviour
         SetCardData(cardIndex);
     }
 
-    public void updateCardDisplay(){
-        cardCost.text = cardData.cost.ToString();
-        cardName.text = cardData.cardName;
+    public void updateCardDisplay() {
+        Debug.Log(cardData._cost);
+        cardCost.text = cardData._cost.ToString();
+        cardName.text = cardData._cardName;
+        AdjustFontSize(cardName, cardData._cardName, 0.24f, 0.36f);
 
         for (int i = cardIndex; i < cardIllustration.Length; i++){
             if(cardIllustration[i].name == cardName.text){
@@ -35,8 +37,9 @@ public class cardDisplay : MonoBehaviour
                 cardIllustration[i].gameObject.SetActive(false);
             }
         }
-        cardType.text = $"{cardData.cardType}";
-        cardDescription.text = cardData.description;
+        cardType.text = $"{cardData._cardType}";
+        cardDescription.text = cardData._description;
+        AdjustFontSize(cardDescription, cardData._description, 0.18f, 0.33f);
 
     }    
 
@@ -44,8 +47,16 @@ public class cardDisplay : MonoBehaviour
     void Update() {  }
 
 
+    void AdjustFontSize(TextMeshProUGUI textComponent, string content, float min, float max) {
+        textComponent.text = content;
+        textComponent.enableAutoSizing = true;
+        textComponent.fontSizeMin = min;
+        textComponent.fontSizeMax = max;
+        textComponent.ForceMeshUpdate();
+    }
 
-    public void SetCardData(int index){
+
+    public void SetCardData(int index) {
         cardData = allcardData[index];
         updateCardDisplay();
     }
