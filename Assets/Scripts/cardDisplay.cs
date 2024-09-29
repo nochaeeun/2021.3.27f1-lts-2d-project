@@ -35,7 +35,7 @@ public class cardDisplay : MonoBehaviour
                 cardIllustration[i].gameObject.SetActive(false);
             }
         }
-        cardType.text = $"{cardData.type}";
+        cardType.text = $"{cardData.cardType}";
         cardDescription.text = cardData.description;
 
     }    

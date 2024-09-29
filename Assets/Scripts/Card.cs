@@ -7,7 +7,7 @@ namespace ProjectSCCard{
         [Tooltip("카드 이름")]
         public string cardName;      // 카드 이름
         [Tooltip("카드 타입")]
-        public CardType type;        // 카드 타입
+        public CardType cardType;        // 카드 타입
         [Tooltip("비용")]
         public int cost;             // 비용
         [Tooltip("대상")]
@@ -34,7 +34,7 @@ namespace ProjectSCCard{
         [Tooltip("카드 ( 역지사지 ) 특수 타입 카드 확인용")]
         public bool isBash;             // 카드 ( 역지사지 ) 특수 타입 카드 확인용
 
-        public enum Type{
+        public enum CardType{
             attack,
             shield,
             skill
