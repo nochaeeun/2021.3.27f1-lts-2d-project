@@ -8,9 +8,9 @@ using TMPro;
 
 public class cardDisplay : MonoBehaviour
 {
-    public Cards[] allcardData;
+    public Card[] allcardData;
     public int cardIndex;
-    public Cards cardData;
+    public Card cardData;
     public TextMeshProUGUI cardCost;
     public TextMeshProUGUI cardName;
     public Image[] cardIllustration;
@@ -20,7 +20,7 @@ public class cardDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        allcardData = Resources.LoadAll<Cards>("cardsData");
+        allcardData = Resources.LoadAll<Card>("cardsData");
         SetCardData(cardIndex);
     }
 

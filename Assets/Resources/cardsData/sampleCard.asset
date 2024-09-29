@@ -18,8 +18,8 @@ MonoBehaviour:
   target: 0
   damage: 1
   shield: 0
-  description: 
-  getCard: 0
-  getCost: 0
-  debuffSad: 0
+  description: This description is sample description
+  drawCount: 0
+  recoveryCost: 0
+  debuffSadness: 0
   isBash: 0
