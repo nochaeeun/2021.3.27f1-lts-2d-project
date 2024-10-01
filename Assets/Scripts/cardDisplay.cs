@@ -13,7 +13,7 @@ public class cardDisplay : MonoBehaviour
     public Card cardData;
     public TextMeshProUGUI cardCost;
     public TextMeshProUGUI cardName;
-    public Image[] cardIllustration;
+    public Image[] cardIllust;
     public TextMeshProUGUI cardType;
     public TextMeshProUGUI cardDescription;
 
@@ -25,16 +25,16 @@ public class cardDisplay : MonoBehaviour
     }
 
     public void updateCardDisplay() {
-        Debug.Log(cardData._cost);
+        //Debug.Log(cardData._cost);
         cardCost.text = cardData._cost.ToString();
         cardName.text = cardData._cardName;
         AdjustFontSize(cardName, cardData._cardName, 0.24f, 0.36f);
 
-        for (int i = cardIndex; i < cardIllustration.Length; i++){
-            if(cardIllustration[i].name == cardName.text){
-                cardIllustration[i].gameObject.SetActive(true);
+        for (int i = cardIndex; i < cardIllust.Length; i++){
+            if(cardIllust[i].name == cardName.text){
+                cardIllust[i].gameObject.SetActive(true);
             }else{
-                cardIllustration[i].gameObject.SetActive(false);
+                cardIllust[i].gameObject.SetActive(false);
             }
         }
         cardType.text = $"{cardData._cardType}";
