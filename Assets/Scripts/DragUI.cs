@@ -14,7 +14,7 @@ public class DragUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     private void Awake(){
         rectTransform = GetComponent<RectTransform>();
-        canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup = GetComponent<CanvasGroup>();  
 
         if(canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
     }

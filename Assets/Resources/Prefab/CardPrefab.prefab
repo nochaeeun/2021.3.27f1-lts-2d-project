@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1103410358783783301}
   - component: {fileID: 297437724448682669}
+  - component: {fileID: 2495173331360208741}
   m_Layer: 5
   m_Name: PlayArrow
   m_TagString: Untagged
@@ -52,8 +53,28 @@ MonoBehaviour:
   arrowPrefab: {fileID: 8325133498562411822, guid: a50ce03d574a91b4389026e3d831e5db, type: 3}
   dotPrefab: {fileID: 3602173738076470997, guid: dab8a79ec048cf143aa32357a86234c9, type: 3}
   poolSize: 50
-  dotPool: []
-  arrowInstance: {fileID: 0}
+  dotPool:
+  - {fileID: 3602173738076470997, guid: dab8a79ec048cf143aa32357a86234c9, type: 3}
+  - {fileID: 3602173738076470997, guid: dab8a79ec048cf143aa32357a86234c9, type: 3}
+  arrowInstance: {fileID: 8325133498562411822, guid: a50ce03d574a91b4389026e3d831e5db, type: 3}
+  spacing: 50
+  arrowAngleAdjustment: 0
+  dotsToSkip: 1
+--- !u!114 &2495173331360208741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314933436326897643}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c453b476da35a44f8d7fbd05c496131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrowPrefab: {fileID: 0}
+  dotPrefab: {fileID: 0}
+  poolSize: 50
   spacing: 50
   arrowAngleAdjustment: 0
   dotsToSkip: 1
