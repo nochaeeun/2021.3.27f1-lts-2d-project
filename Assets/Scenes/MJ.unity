@@ -2460,7 +2460,7 @@ GameObject:
   - component: {fileID: 1951065903}
   - component: {fileID: 1951065902}
   m_Layer: 5
-  m_Name: DeckArea
+  m_Name: Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
