@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 733d0f5849875a14f9096f322dbc1f37, type: 3}
-  m_Name: sampleCard
+  m_Name: bashBystability
   m_EditorClassIdentifier: 
-  _cardName: Sample Card
+  _cardName: bashByStability
   _cardType: 0
   _cost: 1
   _target: 0
-  _damage: 5
+  _damage: 0
   _shield: 0
-  _description: This description is sample description
+  _description: Decreased soul as much as the level of stability
   _drawCount: 0
   _recoveryCost: 0
   _debuffSadness: 0
-  _isBash: 0
+  _isBash: 1

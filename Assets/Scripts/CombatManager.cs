@@ -1,0 +1,225 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using ProjectSCCard;
+
+public class CombatManager : MonoBehaviour
+{
+    // 전투 관련 변수들
+    private List<Enemy> enemies;    // Enemy 클래스가 있다고 가정
+    private Player player;          // Player 클래스가 있다고 가정
+    private int currentTurn;
+    private bool isPlayerTurn;
+
+    [SerializeField] private UIManager uiManager; // UI 매니저 참조
+
+    // 전투 시작 메서드
+    public IEnumerator StartCombat()
+    {
+        // 전투 초기화
+        enemies = new List<Enemy>();  // Enemy 클래스가 있다고 가정
+        player = FindObjectOfType<Player>();  // Player 클래스가 있다고 가정
+        currentTurn = 0;
+        isPlayerTurn = true;
+
+        // 적 생성 (임시로 한 마리만 생성)
+        Enemy newEnemy = new Enemy(); // Enemy 클래스가 있다고 가정
+        enemies.Add(newEnemy);
+
+        // 플레이어 상태 초기화
+        player.ResetForCombat(); // Player 클래스에 ResetForCombat 메서드가 있다고 가정
+
+        // UI 업데이트
+        uiManager.UpdateCombatUI(player, enemies);
+
+        // 전투 시작 로그
+        LogCombatAction("전투가 시작되었습니다.");
+
+        // 턴 관리 코루틴 시작
+        StartCoroutine(ManageTurns());
+
+        yield break;
+    }
+
+    // 턴 관리 메서드
+    private IEnumerator ManageTurns()
+    {
+        while (!IsCombatOver())
+        {
+            currentTurn++;
+            LogCombatAction($"턴 {currentTurn} 시작");
+
+            if (isPlayerTurn)
+            {
+                yield return StartCoroutine(PlayerTurn());
+                isPlayerTurn = false;
+            }
+            else
+            {
+                yield return StartCoroutine(EnemyTurn());
+                isPlayerTurn = true;
+            }
+
+            // 턴 종료 시 필요한 처리
+            yield return new WaitForSeconds(0.5f); // 턴 사이 짧은 대기 시간
+        }
+
+        EndCombat();
+    }
+
+    // 플레이어 턴 처리 메서드
+    private IEnumerator PlayerTurn()
+    {
+        LogCombatAction("플레이어의 턴입니다.");
+
+        // 카드 드로우
+        player.DrawCards(5); // 예시로 5장 드로우
+
+        // 플레이어 행동 처리
+        bool turnEnded = false;
+        while (!turnEnded)
+        {
+            // 플레이어의 입력을 기다림
+            yield return new WaitUntil(() => uiManager.IsPlayerTurnEnded());
+
+            // 카드 사용 로직 (여기서는 간단히 처리)
+            // 실제로는 선택된 카드에 따라 다양한 효과를 적용해야 함
+            if (player.HasPlayedCard())
+            {
+                Card playedCard = player.GetPlayedCard();
+                ApplyCardEffect(playedCard);
+            }
+
+            turnEnded = true;
+        }
+
+        LogCombatAction("플레이어의 턴이 종료되었습니다.");
+    }
+
+    // 적 턴 처리 메서드
+    private IEnumerator EnemyTurn()
+    {
+        LogCombatAction("적의 턴입니다.");
+
+        foreach (Enemy enemy in enemies)
+        {
+            if (enemy.IsAlive())
+            {
+                // 적의 행동 결정
+                EnemyAction action = enemy.DecideAction();
+
+                // 행동 실행
+                switch (action.type)
+                {
+                    case EnemyActionType.Attack:
+                        int damage = CalculateDamage(action.value, enemy.Attack, player.Defense);
+                        player.TakeDamage(damage);
+                        LogCombatAction($"적이 플레이어에게 {damage}의 데미지를 입혔습니다.");
+                        break;
+                    case EnemyActionType.Defend:
+                        enemy.AddDefense(action.value);
+                        LogCombatAction($"적이 {action.value}의 방어력을 얻었습니다.");
+                        break;
+                    // 다른 행동 타입들...
+                }
+
+                yield return new WaitForSeconds(0.5f); // 각 적의 행동 사이 짧은 대기 시간
+            }
+        }
+
+        LogCombatAction("적의 턴이 종료되었습니다.");
+    }
+
+    // 전투 종료 확인 메서드
+    private bool IsCombatOver()
+    {
+        if (player.CurrentHP <= 0)
+        {
+            LogCombatAction("플레이어가 패배했습니다.");
+            return true;
+        }
+
+        if (enemies.TrueForAll(e => !e.IsAlive()))
+        {
+            LogCombatAction("모든 적을 물리쳤습니다!");
+            return true;
+        }
+
+        return false;
+    }
+
+    // 전투 결과 처리 메서드
+    private void EndCombat()
+    {
+        if (player.CurrentHP > 0)
+        {
+            // 승리 보상
+            int expGained = CalculateExperienceGain();
+            player.GainExperience(expGained);
+            LogCombatAction($"전투에서 승리했습니다! {expGained} 경험치를 획득했습니다.");
+
+            // 아이템 획득 등의 추가 보상 로직...
+        }
+        else
+        {
+            LogCombatAction("전투에서 패배했습니다.");
+            // 게임 오버 처리
+            GameManager.Instance.GameOver();
+        }
+    }
+
+    // 데미지 계산 메서드
+    public int CalculateDamage(int baseDamage, int attack, int defense)
+    {
+        int finalDamage = Mathf.Max(0, baseDamage + attack - defense);
+        return finalDamage;
+    }
+
+    // 효과 적용 메서드
+    public void ApplyEffect(string effectType, int magnitude, GameObject target)
+    {
+        // 다양한 효과 (버프/디버프 등) 적용 로직 구현
+        switch (effectType)
+        {
+            case "sadness":
+                // 슬픔 효과 적용
+                break;
+            case "Heal":
+                // 치유 효과 적용
+                break;
+            // 기타 효과들...
+        }
+    }
+
+    // 전투 로그 기록 메서드
+    private void LogCombatAction(string action)
+    {
+        Debug.Log($"전투 로그: {action}");
+    }
+
+    // 카드 효과 적용 메서드
+    private void ApplyCardEffect(Card card)
+    {
+        // 카드 효과 적용 로직
+        // 예: 데미지, 방어력 증가, 버프/디버프 등
+    }
+
+    // 경험치 계산 메서드
+    private int CalculateExperienceGain()
+    {
+        // 경험치 계산 로직
+        return 100; // 임시 값
+    }
+}
+
+// 전체 코드 설명:
+// 이 CombatManager 클래스는 턴제 전투 시스템을 구현합니다.
+// - StartCombat(): 전투를 초기화하고 시작합니다.
+// - ManageTurns(): 플레이어와 적의 턴을 번갈아가며 관리합니다.
+// - PlayerTurn(): 플레이어의 턴 동안 카드 사용과 행동을 처리합니다.
+// - EnemyTurn(): 적의 턴 동안 행동을 결정하고 실행합니다.
+// - IsCombatOver(): 전투 종료 조건을 확인합니다.
+// - EndCombat(): 전투 결과를 처리하고 보상을 지급합니다.
+// - 기타 유틸리티 메서드들: 데미지 계산, 효과 적용, 로그 기록 등을 담당합니다.
+// 이 시스템은 코루틴을 사용하여 비동기적으로 턴을 관리하며,
+// UI 업데이트와 로그 기록을 통해 전투 진행 상황을 표시합니다.
