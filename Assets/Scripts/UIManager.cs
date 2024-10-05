@@ -10,8 +10,13 @@ public class UIManager : MonoBehaviour
 
     private bool playerEndsTurn = false;
 
+    private Sprite[] enemyIntention;
+
     private void Start()
     {
+        enemyIntention = Resources.LoadAll<Sprite>("EnemyIntention");
+
+
         if (turnEndButton != null)
         {
             turnEndButton.onClick.AddListener(EndTurn);
@@ -25,6 +30,11 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         
+    }
+
+    public void UpdateCombatUI(charController player, List<EnemyAi> enemies){
+        // 플레이어 스텟 업데이트
+        // 적 스텟 업데이트
     }
 
     private void EndTurn()

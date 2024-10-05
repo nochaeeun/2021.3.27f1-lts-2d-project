@@ -6,8 +6,8 @@ using ProjectSCCard;
 public class CombatManager : MonoBehaviour
 {
     // 전투 관련 변수들
-    private List<Enemy> enemies;    // Enemy 클래스가 있다고 가정
-    private Player player;          // Player 클래스가 있다고 가정
+    private List<EnemyAi> enemies;    // EnemyAi 클래스가 있다고 가정
+    private charController player;          // PlayerBase 클래스가 있다고 가정
     private int currentTurn;
     private bool isPlayerTurn;
 
@@ -17,17 +17,17 @@ public class CombatManager : MonoBehaviour
     public IEnumerator StartCombat()
     {
         // 전투 초기화
-        enemies = new List<Enemy>();  // Enemy 클래스가 있다고 가정
-        player = FindObjectOfType<Player>();  // Player 클래스가 있다고 가정
+        enemies = new List<EnemyAi>();  // EnemyAi 클래스가 있다고 가정
+        player = FindObjectOfType<charController>();  // PlayerBase 클래스가 있다고 가정
         currentTurn = 0;
         isPlayerTurn = true;
 
         // 적 생성 (임시로 한 마리만 생성)
-        Enemy newEnemy = new Enemy(); // Enemy 클래스가 있다고 가정
+        EnemyAi newEnemy = new EnemyAi(); // EnemyAi 클래스가 있다고 가정
         enemies.Add(newEnemy);
 
-        // 플레이어 상태 초기화
-        player.ResetForCombat(); // Player 클래스에 ResetForCombat 메서드가 있다고 가정
+        // 플레이어 상태 초기화 ?? 나 이거 왜 추가함?? 기억 날때까지 더미데이터
+        // if(turnCount == 0) player.Initialize(); // PlayerBase 클래스에 ResetForCombat 메서드가 있다고 가정
 
         // UI 업데이트
         uiManager.UpdateCombatUI(player, enemies);
@@ -73,7 +73,7 @@ public class CombatManager : MonoBehaviour
         LogCombatAction("플레이어의 턴입니다.");
 
         // 카드 드로우
-        player.DrawCards(5); // 예시로 5장 드로우
+        // player.DrawCards(5); // 예시로 5장 드로우
 
         // 플레이어 행동 처리
         bool turnEnded = false;
@@ -101,7 +101,7 @@ public class CombatManager : MonoBehaviour
     {
         LogCombatAction("적의 턴입니다.");
 
-        foreach (Enemy enemy in enemies)
+        foreach (EnemyBase enemy in enemies)
         {
             if (enemy.IsAlive())
             {

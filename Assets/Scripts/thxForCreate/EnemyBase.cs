@@ -5,6 +5,9 @@ using System;
 using UnityEngine.UIElements;
 public class EnemyBase : MonoBehaviour
 {
+    public int Count;
+
+
     // Start is called before the first frame update
     public enum EnemyType
     {
@@ -14,8 +17,8 @@ public class EnemyBase : MonoBehaviour
     public class Action
     {
 
-        public string Name { get; set; }  // ÀÌ¸§
-        public int Power { get; set; }    // ¼öÄ¡ (°ø°İ·Â, ¹æ¾î·Â, ½ºÅ³ È¿°ú µî)
+        public string Name { get; set; }  // ì´ë¦„
+        public int Power { get; set; }    // ìˆ˜ì¹˜ (ê³µê²©ë ¥, ë°©ì–´ë ¥, ìŠ¤í‚¬ íš¨ê³¼ ë“±)
 
         public Action(string name, int power)
         {
@@ -27,10 +30,10 @@ public class EnemyBase : MonoBehaviour
     public class Enemy
     {
         public string Name { get; set; }
-        public int Uneasy { get; set; } // ºÒ¾Èµµ
-        public int Stastability { get; set; } // ¾ÈÁ¤µµ
+        public int _Health { get; set; } // ë¶ˆì•ˆë„
+        public int _block { get; set; } // ì•ˆì •ë„
         public List<Action> Actions { get; set; }
-        // °ø°İ, ¹æ¾î, ½ºÅ³À» ÀúÀåÇÏ´Â ÅëÇÕ ¸®½ºÆ®
+        // ê³µê²©, ë°©ì–´, ìŠ¤í‚¬ì„ ì €ì¥í•˜ëŠ” í†µí•© ë¦¬ìŠ¤íŠ¸
         public EnemyType Type { get; set; }
 
         public Enemy(EnemyType type)
@@ -48,10 +51,10 @@ public class EnemyBase : MonoBehaviour
                     Actions.Add(new Action("Uneasy2", 1));
                     Actions.Add(new Action("Uneasy3", 14));
 
-                    // ¹æ¾î Ãß°¡
+                    // ë°©ì–´ ì¶”ê°€
                     Actions.Add(new Action("Stastability1", 15));
 
-                    // ½ºÅ³ Ãß°¡
+                    // ìŠ¤í‚¬ ì¶”ê°€
                     Actions.Add(new Action("PlayerCostSub", -2));
                     break;
             }
@@ -59,7 +62,7 @@ public class EnemyBase : MonoBehaviour
 
     }
 
-    public static class ActionPrinter
+    public static class ActionPrinter                               // Close to DecideAction Method
     {
         public static void PrintActions(Enemy enemy)
         {
@@ -69,7 +72,7 @@ public class EnemyBase : MonoBehaviour
             }*/
 
             System.Random random = new System.Random();
-            int randomIndex = random.Next(enemy.Actions.Count); //Count ¸®½ºÆ®¿¡ Æ÷ÇÔµÈ ¿ä¼ÒÀÇ °³¼ö
+            int randomIndex = random.Next(enemy.Actions.Count); //count ë¦¬ìŠ¤íŠ¸ì— í¬í•¨ëœ ìš”ì†Œì˜ ê°œìˆ˜
             Action randomAction = enemy.Actions[randomIndex];
             Debug.Log($"Random Action: {randomAction.Name} with {randomAction.Power} power.");
 
@@ -82,18 +85,19 @@ public class EnemyBase : MonoBehaviour
         {
             System.Random random = new System.Random();
             Array enemtTypes = Enum.GetValues(typeof(EnemyType));
-            //EnemtTypeÀÇ ¸ğµç °ªÀ» °¡Á®¿È
+            //EnemtTypeì˜ ëª¨ë“  ê°’ì„ ê°€ì ¸ì˜´
             EnemyType randomEnemyType = (EnemyType)enemtTypes.GetValue
                                         (random.Next(enemtTypes.Length));
-            //·£´ıÀ¸·Î ÇÏ³ªÀÇ EnemyType ¼±ÅÃ
+            //ëœë¤ìœ¼ë¡œ í•˜ë‚˜ì˜ EnemyTypeì„ ê°€ì ¸ì˜´
             Enemy enemy = new Enemy(randomEnemyType);
-            //·£´ıÀ¸·Î ¼±ÅÃµÈ Àû »ı¼º
+            //ëœë¤ìœ¼ë¡œ ì„ íƒëœ ì  ìƒì„±
             ActionPrinter.PrintActions(enemy);
         }
     }
+
     void Start()
     {
-        EnemycreateRandom.CreateRandomEnemy(); // ÀûÀ» ·£´ıÀ¸·Î »ı¼º
+        EnemycreateRandom.CreateRandomEnemy(); // ì ì„ ëœë¤ìœ¼ë¡œ ìƒì„±
     }
     // Update is called once per frame
     void Update()
@@ -102,5 +106,27 @@ public class EnemyBase : MonoBehaviour
     }
 
     // {Actions[i].Name / Actions[i].Power);
-    //Debug·Î Ãâ·Â / ·£´ıÀ¸·Î ÇÏ³ª »Ì¾Æ¼­ Ãâ·ÂÇØº¸±â
+    //Debugë¡œ ì¶œë ¥ / ëœë¤ìœ¼ë¡œ í•˜ë‚˜ ë½‘ì•„ì„œ ì¶œë ¥í•´ë³´ê¸°
+
+    // ì ì˜ í–‰ë™ì„ ìˆ˜í–‰í•˜ëŠ” ë©”ì„œë“œ
+    void PerformAction()
+    {
+        // TODO: ì ì˜ í–‰ë™ì„ êµ¬í˜„í•˜ì„¸ìš”
+        // ì €ì¥ëœ í–‰ë™ ì‹¤í–‰
+        // í–‰ë™ ê²°ê³¼ ì²˜ë¦¬
+    }
+
+    // ì ì˜ ì˜ë„ë¥¼ ì—…ë°ì´íŠ¸í•˜ëŠ” ë©”ì„œë“œ
+    void UpdateIntention()
+    {
+        // TODO: ì ì˜ ì˜ë„ ì—…ë°ì´íŠ¸ ë¡œì§ì„ êµ¬í˜„í•˜ì„¸ìš”
+        // ë‹¤ìŒ í–‰ë™ì— ëŒ€í•œ ì˜ë„ í‘œì‹œ ì—…ë°ì´íŠ¸
+    }
+
+    // ì ì˜ íŠ¹ìˆ˜ ëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ëŠ” ë©”ì„œë“œ
+    void UseSpecialAbility()
+    {
+        // TODO: ì ì˜ íŠ¹ìˆ˜ ëŠ¥ë ¥ ì‚¬ìš© ë¡œì§ì„ êµ¬í˜„í•˜ì„¸ìš”
+        // íŠ¹ìˆ˜ ìŠ¤í‚¬ ì‚¬ìš©
+    }
 }

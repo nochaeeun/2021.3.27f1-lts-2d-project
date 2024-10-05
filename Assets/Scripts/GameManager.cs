@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
     public UIManager uiManager;
     public cardManager cardManager;
     public deckSystem deckSystem;
-    //public playerManager playerManager;
-    //public enemyManager enemyManager;
+    public charController playerManager;
+    public EnemyAi enemyManager;
     
     public enum GameState { Menu, Combat, Pause, GameOver, Win }
     public GameState currentState = GameState.Menu;
@@ -61,11 +61,11 @@ public class GameManager : MonoBehaviour
 
     public void GameOver() 
     {
-        if (playerManager.health >= playerManager.maxHealth) // playerManager에서 플레이어 체력을 가져와야함
+        if (playerManager.isPlayerLose()) // playerManager에서 플레이어 체력을 가져와야함
         {
             currentState = GameState.GameOver;
         }
-        else if(enemies.Count == 0) // enemyManager에서 적 리스트를 가져와야함
+        else if(enemyManager.Count == 0) // enemyManager에서 적 리스트를 가져와야함
         {
             currentState = GameState.Win;
         }
