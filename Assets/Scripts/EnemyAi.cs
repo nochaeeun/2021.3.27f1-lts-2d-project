@@ -32,16 +32,25 @@ public class Action{
 
 public class EnemyAi : MonoBehaviour
 {
+    // 외부 컨트롤러
+    public GameManager gameManager;
+    public CombatManager combatManager;
+    public UIManager uiManager;
+    public charController playerManager;
+
+
     public string Name;
     public int Health;
     public int Block;
     public ActionType Intention;
 
-    private List<Action> Actions;
-    private List<Action> SpecialActions;
-
     private EnemyID eID {get; set;}
     private int E_Power;
+
+    // 공격 관련 변수 , 리스트
+    private List<Action> Actions;
+    private List<Action> SpecialActions;
+    public int AttackPower;
 
     private void Enemy(EnemyID ID){
         eID = ID;
@@ -70,7 +79,6 @@ public class EnemyAi : MonoBehaviour
             ExecuteAction();
             nextAction = null;
         }
-        PrepareNextAction();
     }
 
     public void ExecuteAction(){
@@ -80,6 +88,10 @@ public class EnemyAi : MonoBehaviour
                 case ActionType.Attack:
                 break;
                 case ActionType.PlayerCost:
+                playerManager.currentCost -= nextAction._ePower;
+                if(playerManager.currentCost < 0){
+                    playerManager.currentCost = 0;
+                }
                 break;
                 // next Time
             }
