@@ -11,8 +11,6 @@ public class deckSystem : MonoBehaviour
 
     private cardManager cardManager;                         // cardManager 참조
 
-    //private List<Card> deck = new List<Card>();
-
     void Start()
     {
         cardManager = FindObjectOfType<cardManager>();
@@ -48,7 +46,7 @@ public class deckSystem : MonoBehaviour
             }
         }
 
-        Card nextCard = playerDeck[0]; // x로 둔 이유는 카드 덱의 개념이 확실한 상태아니기 때문
+        Card nextCard = playerDeck[x]; // x로 둔 이유는 카드 덱의 개념이 확실한 상태아니기 때문
         playerDeck.RemoveAt(0);
         cardManager.AddCardToHand(nextCard);
     }
@@ -98,7 +96,7 @@ public class deckSystem : MonoBehaviour
         cardManager.inHandCards.Clear();
     }
 
-    public int GetDeckSize()
+    public void GetDeckSize()
     {
         return playerDeck.Count;
     }
@@ -131,14 +129,14 @@ public class deckSystem : MonoBehaviour
         // TODO: 소멸된 카드들을 덱으로 반환
         // - 소멸 파일의 모든 카드를 덱에 추가
         // - 덱 셔플
-        // return null;
+        return null;
     }
 
     public void SortDeckByEnergyCost() // 구현 x
     {
         // TODO: 덱을 에너지 비용 순으로 정렬
         // - 덱의 카드를 에너지 비용 기준으로 정렬
-        // return null;
+        return null;
     }
 
     public void TransformCard(Card oldCard, Card newCard) // 구현 x
@@ -146,6 +144,6 @@ public class deckSystem : MonoBehaviour
         // TODO: 카드 변환
         // - 지정된 카드를 덱에서 제거
         // - 새로운 카드를 덱에 추가
-        // return null;
+        return null;
     }
 }
