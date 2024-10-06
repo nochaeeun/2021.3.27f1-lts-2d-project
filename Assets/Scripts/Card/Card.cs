@@ -16,7 +16,10 @@ namespace ProjectSCCard{
         public int _cost;
         [Tooltip("대상")]
         public Target _target;
-
+        [Tooltip("카드 효과")]
+        public EffectType _effectType;
+        [Tooltip("카드 효과 - 2")]
+        public EffectType _effectType2;
 
         [Space(10f)]
         [Header("기본 효과")]
@@ -31,15 +34,10 @@ namespace ProjectSCCard{
 
         [Space(10f)]
         [Header("추가 효과")]
-        [Tooltip("추가 카드 뽑기")]
-        public int _drawCount;
-        [Tooltip("추가 코스트 획득")]
-        public int _recoveryCost;
-        [Tooltip("디버프 ( 슬픔 )")]
-        public int _debuffSadness;
-        [Tooltip("카드 ( 역지사지 ) 특수 타입 카드 확인용")]
-        public bool _isBash;
-
+        [Tooltip("추가 효과 크기")]
+        public int _effectMagnitude;
+        [Tooltip("추가 효과 크기 2")]
+        public int _effectMagnitude2;
         // 프로퍼티
         public int CardID
         {
@@ -55,6 +53,16 @@ namespace ProjectSCCard{
         {
             get => _cardType;
             set => _cardType = value;
+        }
+        public EffectType EType
+        {
+            get => _effectType;
+            set => _effectType = value;
+        }
+        public EffectType EType2
+        {
+            get => _effectType2;
+            set => _effectType2 = value;
         }
         public int Cost
         {
@@ -83,25 +91,15 @@ namespace ProjectSCCard{
             set => _description = value;
         }
 
-        public int DrawCount
+        public int EffectMagnitude
         {
-            get => _drawCount;
-            set => _drawCount = value;
+            get => _effectMagnitude;
+            set => _effectMagnitude = value;
         }
-        public int RecoveryCost
+        public int EffectMagnitude2
         {
-            get => _recoveryCost;
-            set => _recoveryCost = value;
-        }
-        public int DebuffSadness
-        {
-            get => _debuffSadness;
-            set => _debuffSadness = value;
-        }
-        public bool IsBash
-        {
-            get => _isBash;
-            set => _isBash = value;
+            get => _effectMagnitude2;
+            set => _effectMagnitude2 = value;
         }
         // 열거형은 그대로 유지
         public enum CardType
@@ -109,6 +107,17 @@ namespace ProjectSCCard{
             attack,
             shield,
             skill
+        }
+        public enum EffectType
+        {
+            none,
+            draw,
+            cost,
+            sadness,
+            bash,
+            Heal,
+            loseCost,
+            loseCard
         }
         public enum Target
         {

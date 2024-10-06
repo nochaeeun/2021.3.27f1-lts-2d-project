@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
         // - 초기 게임 상태 설정
         deckSystem.InitializeDeck();
         deckSystem.DrawCard(5);
+        StartCombat();
     }
 
     // Update is called once per frame
@@ -78,11 +79,12 @@ public class GameManager : MonoBehaviour
         // - 첫 번째 맵 생성
     }
 
-    public void EndTurn() 
+    public void StartCombat() 
     {
-        // TODO: 턴 종료 처리
-        // - 플레이어 상태 업데이트
-        // - 적 행동 처리
+        // TODO: 전투 시작
+        // - 전투 초기화
+        combatManager.StartCombat();
+        currentState = GameState.Combat;
     }
 
     public void GameOver() 
@@ -120,23 +122,24 @@ public class GameManager : MonoBehaviour
         // TODO: 게임 종료
         // - 저장 처리
         // - 애플리케이션 종료
+        Application.Quit();
     }
 
-    /*
-    public void LoadNextFloor() 
-    {
-        // TODO: 다음 층 로드
-        // - 새로운 맵 생성
-        // - 플레이어 위치 초기화
-    }
-    */
+    
+    // public void LoadNextFloor() 
+    // {
+    //     // TODO: 다음 층 로드
+    //     // - 새로운 맵 생성
+    //     // - 플레이어 위치 초기화
+    // }
 
-    public void UpdateGameState(GameState newState) 
-    {
-        // TODO: 게임 상태 업데이트
-        // - 현재 상태 변경
-        // - 상태에 따른 처리
-    }
+    // public void UpdateGameState(GameState newState) 
+    // {
+    //     // TODO: 게임 상태 업데이트
+    //     // - 현재 상태 변경
+    //     // - 상태에 따른 처리
+    //     currentState = newState;
+    // }
 
     public void HandlePlayerDeath() 
     {

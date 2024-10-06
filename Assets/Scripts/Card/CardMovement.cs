@@ -36,11 +36,17 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
     // 카드 플레이 임계값 (화면 높이의 비율)
     [SerializeField] private float cardPlayThreshold = 0.7f;
 
+    public CombatManager combatManager;
+
+
+
     // 컴포넌트 초기화 및 원래 변환 정보 저장
     void Awake(){
         //Debug.Log("1-01");
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
+
+        combatManager = FindObjectOfType<CombatManager>();
 
         originalScale = rectTransform.localScale;
         originalPos = rectTransform.localPosition;
@@ -160,7 +166,47 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
         rectTransform.localPosition = playPos;
         rectTransform.localRotation = Quaternion.identity;
-        
+
+        if(!Input.GetMouseButton(0)){                                         // 전투관련 코드 : 마우스 왼쪽 버튼이 눌리지 않았을 때
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);      // 전투관련 코드 : 마우스 위치에서 레이 생성
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);  // 전투관련 코드 : 레이를 캐스트하여 충돌 감지
+            Card selectedCard = GetComponent<cardDisplay>().cardData;
+
+            if(hit.collider != null){
+                if(hit.collider.CompareTag("Enemy")){
+                    // 적에게 플레이
+                if (currentState == 3 && selectedCard._target == Card.Target.Enemy)
+                {
+                    // 적에게 카드 효과 적용
+                    EnemyAi enemy = hit.collider.GetComponent<EnemyAi>();
+                    if (enemy != null)
+                    {
+                        // 카드 효과 실행
+                        combatManager.CardEffect(selectedCard);
+                        
+                        // 카드 사용 후 처리
+                        Destroy(gameObject);
+                    }
+                }
+                } else if (hit.collider.CompareTag("Player")){
+                    // 플레이어에게 플레이
+                    if (currentState == 3 && selectedCard._target == Card.Target.Self)
+                    {
+                        // 플레이어에게 카드 효과 적용
+                        charController player = hit.collider.GetComponent<charController>();
+                        if (player != null)
+                        {
+                            // 카드 효과 실행
+                            combatManager.CardEffect(selectedCard);
+                            
+                            // 카드 사용 후 처리
+                            Destroy(gameObject);
+                        }
+                    }
+                }
+            }
+
+        }
         // 코드 수정 후
         if(Input.mousePosition.y <= Screen.height * cardPlayThreshold){
             currentState = 2;

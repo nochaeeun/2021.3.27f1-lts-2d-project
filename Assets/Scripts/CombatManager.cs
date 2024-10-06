@@ -11,6 +11,9 @@ public class CombatManager : MonoBehaviour
     private int currentTurn;
     private bool isPlayerTurn;
 
+    public GameObject enemyObj;
+    public GameObject playerObj;
+
     [SerializeField] private UIManager uiManager; // UI 매니저 참조
     [SerializeField] private EnemyAi enemy;
 
@@ -24,6 +27,8 @@ public class CombatManager : MonoBehaviour
         enemy = FindObjectOfType<EnemyAi>();
         currentTurn = 0;
         isPlayerTurn = true;
+        enemyObj = GameObject.FindGameObjectWithTag("Enemy");
+        playerObj = GameObject.FindGameObjectWithTag("Player");
 
         // 적 생성 (임시로 한 마리만 생성)
         EnemyAi newEnemy = new EnemyAi(); // EnemyAi 클래스가 있다고 가정
@@ -86,6 +91,8 @@ public class CombatManager : MonoBehaviour
             // 플레이어의 입력을 기다림
             yield return new WaitUntil(() => uiManager.IsPlayerTurnEnded());
 
+            // 플레이어가 카드를 사용하는 부분
+
             
 
             turnEnded = true;
@@ -114,12 +121,14 @@ public class CombatManager : MonoBehaviour
         if (player.isPlayerDie())
         {
             LogCombatAction("플레이어가 패배했습니다.");
+            GameManager.Instance.currentState = GameManager.GameState.GameOver;
             return true;
         }
 
         if (enemies.TrueForAll(e => !e.IsAlive()))
         {
             LogCombatAction("모든 적을 물리쳤습니다!");
+            GameManager.Instance.currentState = GameManager.GameState.Win;
             return true;
         }
 
@@ -153,25 +162,44 @@ public class CombatManager : MonoBehaviour
         return finalDamage;
     }
 
+    public void CardEffect(Card card){
+        ApplyCardEffect(card);
+    }
+
     // 효과 적용 메서드
-    public void ApplyEffect(string effectType, int magnitude, GameObject target)
+    public void ApplyEffect(string effectType, int magnitude)
     {
         // 다양한 효과 (버프/디버프 등) 적용 로직 구현
         switch (effectType)
         {
+            case "none":
+                break;
             case "sadness":
                 // 슬픔 효과 적용
                 break;
             case "Heal":
                 // 치유 효과 적용
+                player.Heal(magnitude);
+                break;
+            case "bash":
+                enemy.eTakeDamage(player.block);
                 break;
             case "draw":
                 player.deckSystem.DrawCard(magnitude);
                 break;
             case "cost":
-                player.GainCost(magnitude);
+                player.GainCost(magnitude); // 추후 다음턴 로직 추가
+                break;
+            case "loseCost":
+                player.UseCost(magnitude);
+                break;
+            case "loseCard":
+                // player.deckSystem.LoseCard(magnitude);
                 break;
             // 기타 효과들...
+        }
+        if(card._effectType2 != EffectType.none){
+            ApplyEffect(card._effectType2.ToString(), card._effectMagnitude2);
         }
     }
 
@@ -191,7 +219,7 @@ public class CombatManager : MonoBehaviour
                     enemy.eTakeDamage(card._damage);
                     break;
                 case "skill":
-                    // ApplyEffect(ToString(), card._debuffSadness, player.gameObject);
+                    ApplyEffect(card._effectType.ToString(), card._effectMagnitude, player.gameObject);
                     break;
                 case "shield":
                     player.GainBlock(card._shield);
