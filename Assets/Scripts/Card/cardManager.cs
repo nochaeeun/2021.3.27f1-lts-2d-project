@@ -7,6 +7,8 @@ using ProjectSCCard;
 public class cardManager : MonoBehaviour
 {
 
+    // 여기서는 패에 들어온 카드만 관리하기로 합시다.
+
     public deckSystem deckSystem;
 
     public GameObject cardPrefab; // 인스펙터에서 카드 프리팹 할당
@@ -31,12 +33,15 @@ public class cardManager : MonoBehaviour
     }
 
 
-    public void AddCardToHand(Card cardData)
+    public void AddCardToHand(int i)
     {
         // instantiate card prefab
         GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);  // 카드 프리팹을 인스턴스화하여 새 카드 생성
         
         inHandCards.Add(newCard);               // 새로 생성된 카드를 손에 있는 카드 목록에 추가
+
+        Card[] _cardData = deckSystem.listUpPlayerDeck();
+        Card cardData = _cardData[i];
 
         //인스턴스화된 카드의 CardData 설정
         newCard.GetComponent<cardDisplay>().cardData = cardData;

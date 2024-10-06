@@ -11,26 +11,51 @@ public class deckSystem : MonoBehaviour
 
     private cardManager cardManager;                         // cardManager 참조
 
-    //private List<Card> deck = new List<Card>();
+    private List<Card> _allCards = new List<Card>();          // 카드 데이터 모음
 
     void Start()
     {
+        _allCards = DataManager.Instance.cardDatabase;
         cardManager = FindObjectOfType<cardManager>();
         InitializeDeck();
     }
 
-    // 덱을 초기화하고 시작 카드를 뽑는 메서드
-    private void InitializeDeck()
-    {
-        Card[] allCardData = Resources.LoadAll<Card>("cardsData");
-        playerDeck.AddRange(allCardData);
-        ShuffleDeck();
-
+    public void InitializeDeck(){ //시작 덱 구성 : 시작할 때 한번만 할 것을 추천
+        // 플레이어 덱 초기화
+        playerDeck.Clear();
+        // 플레이어 덱에 카드 추가
         for (int i = 0; i < 5; i++)
         {
-            DrawCard();
+            AddCardToDeck(1001);
+            AddCardToDeck(2001);
         }
+        AddCardToDeck(1003);
     }
+
+    public List<Card> listUpPlayerDeck(){
+        return playerDeck;
+    }
+
+    public List<Card> listUpUsedDeck(){
+        return usedDeck;
+    }
+
+    public List<Card> listUpDestroyedDeck(){
+        return destroyedDeck;
+    }
+
+    // 덱을 초기화하고 시작 카드를 뽑는 메서드
+    // private void InitializeDeck()
+    // {
+    //     // Card[] allCardData = Resources.LoadAll<Card>("cardsData");
+    //     playerDeck.AddRange(allCardData);
+    //     ShuffleDeck();
+
+    //     for (int i = 0; i < 5; i++)
+    //     {
+    //         DrawCard();
+    //     }
+    // }
 
     // 카드를 뽑는 메서드
     public void DrawCard()
@@ -76,12 +101,16 @@ public class deckSystem : MonoBehaviour
     // 카드를 사용한 더미로 이동시키는 메서드
     public void UseCard(Card card)
     {
+        // 카드를 사용한 더미로 이동
+        cardManager.inHandCards.Remove(card);
         usedDeck.Add(card);
     }
 
     // 카드를 소멸 더미로 이동시키는 메서드
     public void DestroyCard(Card card)
     {
+        // 카드를 소멸 더미로 이동
+        cardManager.inHandCards.Remove(card);
         destroyedDeck.Add(card);
     }
 
@@ -103,19 +132,44 @@ public class deckSystem : MonoBehaviour
         return playerDeck.Count;
     }
 
-    public void AddCardToDeck(Card card)
+    public void AddCardToDeck(int cardId)
     {
-        // TODO: 덱에 카드 추가
-        // - 새 카드를 덱에 추가
-        // - 필요시 덱 셔플
+        // 카드 데이터 목록에서 지정된 이름의 카드 찾기
+        CardData specificCardData = DataManager.Instance.GetCardById(cardId);
+
+        if (specificCardData != null)
+        {
+            // 찾은 카드 데이터로 새 카드 인스턴스 생성
+            Card newCard = new Card(specificCardData);
+
+            // - 새 카드를 덱에 추가
+            if (playerDeck == null)
+            {
+                playerDeck = new List<Card>();
+            }
+            playerDeck.Add(newCard);
+
+            Debug.Log($"'{newCard.cardName}' 카드가 플레이어 덱에 추가되었습니다.");
+        }
+        else
+        {
+            Debug.LogWarning($"'{cardId}' 이름의 카드를 찾을 수 없습니다.");
+        }
     }
 
     public Card GetRandomCard()
     {
         // TODO: 덱에서 무작위 카드 선택
-        // - 덱에서 무작위로 카드 선택
-        // - 선택된 카드 반환
-        return null;
+        if (playerDeck.Count > 0)
+        {
+            int randomIndex = Random.Range(0, playerDeck.Count);        // - 덱에서 무작위로 카드 선택
+            return playerDeck[randomIndex];                             // - 선택된 카드 반환
+        }
+        else
+        {
+            Debug.LogWarning("덱에 카드가 없습니다.");
+            return null;
+        }
     }
 
     public List<Card> GetPlayableCards() // 구현 x
@@ -148,4 +202,7 @@ public class deckSystem : MonoBehaviour
         // - 새로운 카드를 덱에 추가
         // return null;
     }
+
+
+
 }

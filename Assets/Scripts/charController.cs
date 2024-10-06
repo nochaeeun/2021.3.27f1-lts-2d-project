@@ -56,10 +56,10 @@ public class charController : MonoBehaviour
         sadness = 0;
         hand.Clear();
         discardPile.Clear();
-        // - 기본 스탯 설정
-        // 플레이어 스탯의 대한 내용은 아직 
-        // - 시작 덱 생성
-        deck = new List<Card>();
+        // - 기본 스탯 설정 : 플레이어 스탯의 대한 내용은 아직 
+
+        // - 시작 덱 생성 deck = new List<Card>();
+        deckSystem.InitializeDeck();
     }
 
     public void levelInitialize(){
@@ -205,5 +205,8 @@ public class charController : MonoBehaviour
             return true;
         }
         return false;
+    }
+    public int playerCostCheck(){
+        return currentCost;
     }
 }

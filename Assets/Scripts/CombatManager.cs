@@ -27,8 +27,8 @@ public class CombatManager : MonoBehaviour
         EnemyAi newEnemy = new EnemyAi(); // EnemyAi 클래스가 있다고 가정
         enemies.Add(newEnemy);
 
-        // 플레이어 상태 초기화 ?? 나 이거 왜 추가함?? 기억 날때까지 더미데이터
-        // if(turnCount == 0) player.Initialize(); // PlayerBase 클래스에 ResetForCombat 메서드가 있다고 가정
+        // 플레이어 상태 초기화
+        player.levelInitialize();
 
         // UI 업데이트
         uiManager.UpdateCombatUI(player, enemies);
@@ -75,6 +75,7 @@ public class CombatManager : MonoBehaviour
 
         // 카드 드로우
         // player.DrawCards(5); // 예시로 5장 드로우
+        player.deckSystem.DrawCard();
 
         // 플레이어 행동 처리
         bool turnEnded = false;
@@ -83,14 +84,7 @@ public class CombatManager : MonoBehaviour
             // 플레이어의 입력을 기다림
             yield return new WaitUntil(() => uiManager.IsPlayerTurnEnded());
 
-            // 카드 사용 로직 (여기서는 간단히 처리)
-            // 실제로는 선택된 카드에 따라 다양한 효과를 적용해야 함
             
-            // if (player.HasPlayedCard())
-            // {
-            //     Card playedCard = player.GetPlayedCard();
-            //     ApplyCardEffect(playedCard);
-            // }
 
             turnEnded = true;
         }
@@ -169,6 +163,12 @@ public class CombatManager : MonoBehaviour
             case "Heal":
                 // 치유 효과 적용
                 break;
+            case "draw":
+                player.deckSystem.DrawCard();
+                break;
+            case "cost":
+                player.GainCost(magnitude);
+                break;
             // 기타 효과들...
         }
     }
@@ -184,6 +184,17 @@ public class CombatManager : MonoBehaviour
     {
         // 카드 효과 적용 로직
         // 예: 데미지, 방어력 증가, 버프/디버프 등
+        switch(card.cardType){
+                case CardType.Attack:
+                    enemy.eTakeDamage(card._damage);
+                    break;
+                case CardType.Skill:
+                    // ApplyEffect(ToString(), card._debuffSadness, player.gameObject);
+                    break;
+                case CardType.Shield:
+                    player.GainBlock(card._shield);
+                    break;
+            }
     }
 
     // 경험치 계산 메서드
@@ -191,6 +202,15 @@ public class CombatManager : MonoBehaviour
     {
         // 경험치 계산 로직
         return 100; // 임시 값
+    }
+
+    public void playerUseCard(Card card){
+        if(player.playerCostCheck() >= card.cost){
+            player.UseCost(card.cost);
+            ApplyCardEffect(card);
+            player.deckSystem.UseCard(card);
+        }
+        
     }
 }
 

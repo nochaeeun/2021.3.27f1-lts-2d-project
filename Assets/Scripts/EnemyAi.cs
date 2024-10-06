@@ -122,6 +122,30 @@ public class EnemyAi : MonoBehaviour
         return Health > 0;
     }
 
+    public void eTakeDamage(int amount){
+        int newDamage;
+        if(Block > amount){
+            Block -= amount;
+        }else {
+            newDamage = amount - Block;
+            Health -= newDamage;
+            if(Health <= 0){
+                Health = 0;
+                Die();
+            }
+        }
+    }
+    public void eGainBlock(int amount){
+        Block += amount;
+    }
+
+    public void Die(){
+        // TODO: 적 사망 처리
+        if(Health <= 0){
+            gameManager.currentState = GameManager.GameState.Win;
+        }
+    }
+
 
     // public void UseSpecialAbility(){
         // 적의 특수 능력을 사용하는 메서드

@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
         // TODO: 게임 초기화
         // - 필요한 매니저들 초기화
         // - 초기 게임 상태 설정
+        deckSystem.InitializeDeck();
     }
 
     // Update is called once per frame

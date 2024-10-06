@@ -116,8 +116,15 @@ public class DataManager : MonoBehaviour
     public Card GetCardById(string cardId)
     {
         // TODO: ID로 카드 데이터 검색
-        // - 지정된 ID에 해당하는 카드 데이터 반환
-        return null;
+        if (cardDatabase.TryGetValue(cardId, out Card card))
+        {
+            return card; // - 지정된 ID에 해당하는 카드 데이터 반환
+        }
+        else
+        {
+            Debug.LogWarning($"카드 ID '{cardId}'를 찾을 수 없습니다.");
+            return null;
+        }
     }
 
     public EnemyAi GetEnemyById(string enemyId)
