@@ -184,17 +184,17 @@ public class CombatManager : MonoBehaviour
     {
         // 카드 효과 적용 로직
         // 예: 데미지, 방어력 증가, 버프/디버프 등
-        switch(card.cardType){
-                case CardType.Attack:
+        switch(card._cardType.ToString()){
+                case "attack":
                     enemy.eTakeDamage(card._damage);
                     break;
-                case CardType.Skill:
+                case "skill":
                     // ApplyEffect(ToString(), card._debuffSadness, player.gameObject);
                     break;
-                case CardType.Shield:
+                case "shield":
                     player.GainBlock(card._shield);
                     break;
-            }
+        }
     }
 
     // 경험치 계산 메서드
@@ -205,8 +205,8 @@ public class CombatManager : MonoBehaviour
     }
 
     public void playerUseCard(Card card){
-        if(player.playerCostCheck() >= card.cost){
-            player.UseCost(card.cost);
+        if(player.playerCostCheck() >= card._cost){
+            player.UseCost(card._cost);
             ApplyCardEffect(card);
             player.deckSystem.UseCard(card);
         }

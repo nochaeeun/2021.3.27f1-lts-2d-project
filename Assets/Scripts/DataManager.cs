@@ -15,7 +15,8 @@ public class DataManager : MonoBehaviour
     public UIManager uiManager;
     public CombatManager combatManager;
 
-
+    // 카드 데이터
+    public List<Card> cardDatabase;
 
     // 싱글톤 인스턴스
     private static DataManager instance;
@@ -61,18 +62,18 @@ public class DataManager : MonoBehaviour
         Card[] cardDataArray = Resources.LoadAll<Card>("Prefab/cardsData");
         
         // 로드된 카드 데이터를 저장할 Dictionary 생성
-        Dictionary<string, Card> cardDatabase = new Dictionary<string, Card>();
+        cardDatabase = new List<Card>();
         
         // 각 카드 데이터를 Dictionary에 추가
         foreach (Card card in cardDataArray)
         {
-            if (!cardDatabase.ContainsKey(card.cardId))
+            if (!cardDatabase.Contains(card))
             {
-                cardDatabase.Add(card.cardId, card);
+                cardDatabase.Add(card);
             }
             else
             {
-                Debug.LogWarning($"중복된 카드 ID 발견: {card.cardId}");
+                Debug.LogWarning($"중복된 카드 ID 발견: {card._cardID}");
             }
         }
         
@@ -113,21 +114,20 @@ public class DataManager : MonoBehaviour
         // - JSON 또는 ScriptableObject에서 업적 정보 로드
     }
 
-    public Card GetCardById(string cardId)
+    public Card GetCardById(int cardId)
     {
         // TODO: ID로 카드 데이터 검색
-        if (cardDatabase.TryGetValue(cardId, out Card card))
+        foreach (Card card in cardDatabase)
         {
-            return card; // - 지정된 ID에 해당하는 카드 데이터 반환
+            if (card._cardID == cardId)
+            {
+                return card; // - 지정된 ID에 해당하는 카드 데이터 반환
+            }
         }
-        else
-        {
-            Debug.LogWarning($"카드 ID '{cardId}'를 찾을 수 없습니다.");
-            return null;
-        }
+        return null;
     }
 
-    public EnemyAi GetEnemyById(string enemyId)
+    public EnemyAi GetEnemyById(int enemyId)
     {
         // TODO: ID로 적 데이터 검색
         // - 지정된 ID에 해당하는 적 데이터 반환

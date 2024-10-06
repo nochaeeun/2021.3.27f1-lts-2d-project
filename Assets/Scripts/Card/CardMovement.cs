@@ -120,18 +120,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         //Debug.Log("1-13");
         if(currentState == 2){
             if(RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.GetComponent<RectTransform>(), eventData.position, eventData.pressEventCamera, out Vector2 localPointerPosition)){
-                // 코드 수정 전
-                //localPointerPosition /= canvas.scaleFactor;
-                //Vector3 offsetToOriginal = localPointerPosition - originalLocalPointerPos;
-                //rectTransform.localPosition = originalPanelLocalPos + offsetToOriginal;
-                
-                //if(rectTransform.localPosition.y > cardPlay.y){
-                //    currentState = 3;
-                //    playArrow.SetActive(true);
-                //    rectTransform.localPosition = playPos;
-                //}
-
-                // 코드 수정 후
+                                // 코드 수정 후
                 localPointerPosition /= canvas.scaleFactor;
                 Vector3 offsetToOriginal = localPointerPosition - originalLocalPointerPos;
                 rectTransform.localPosition = originalPanelLocalPos + offsetToOriginal;
@@ -172,12 +161,6 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         rectTransform.localPosition = playPos;
         rectTransform.localRotation = Quaternion.identity;
         
-        // 코드 수정 전
-        //if(Input.mousePosition.y > cardPlay.y){
-        //    currentState = 2;
-        //    playArrow.SetActive(false);
-        //}
-
         // 코드 수정 후
         if(Input.mousePosition.y <= Screen.height * cardPlayThreshold){
             currentState = 2;

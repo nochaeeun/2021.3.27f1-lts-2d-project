@@ -7,7 +7,7 @@ namespace ProjectSCCard{
         // 변수 필드
         [Header("기본 정보")]
         [Tooltip("카드 ID")]
-        public string cardId;
+        public int _cardID;
         [Tooltip("카드 이름")]
         public string _cardName;
         [Tooltip("카드 타입")]
@@ -41,6 +41,11 @@ namespace ProjectSCCard{
         public bool _isBash;
 
         // 프로퍼티
+        public int CardID
+        {
+            get => _cardID;
+            set => _cardID = value;
+        }
         public string CardName
         {
             get => _cardName;

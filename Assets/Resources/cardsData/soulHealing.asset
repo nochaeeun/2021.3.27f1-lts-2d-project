@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 733d0f5849875a14f9096f322dbc1f37, type: 3}
-  m_Name: bashBystability
+  m_Name: soulHealing
   m_EditorClassIdentifier: 
-  _cardID: 0
-  _cardName: bashByStability
-  _cardType: 0
-  _cost: 1
-  _target: 0
-  _damage: 0
+  _cardID: 3002
+  _cardName: Soul Healing
+  _cardType: 2
+  _cost: 0
+  _target: 1
+  _damage: 4
   _shield: 0
-  _description: Decreased soul as much as the level of stability
+  _description: 
   _drawCount: 0
   _recoveryCost: 0
   _debuffSadness: 0
-  _isBash: 1
+  _isBash: 0
