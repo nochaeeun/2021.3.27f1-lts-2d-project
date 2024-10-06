@@ -11,6 +11,9 @@ public class cardManager : MonoBehaviour
 
     public deckSystem deckSystem;
     public DataManager dataManager;
+    public List<Card> cardInHand = new List<Card>();
+
+    private int cardInHandCount = 0;
 
     public GameObject cardPrefab; // 인스펙터에서 카드 프리팹 할당
     public Transform handTransform; // 손 위치 (임의로 일단 할당)
@@ -22,29 +25,39 @@ public class cardManager : MonoBehaviour
     public float verticalSpacing = 49f; // ???
 
     public List<GameObject> inHandCards = new List<GameObject>(); // 손에 있는 카드 목록
+    
+    public List<Card> inHandCardData = new List<Card>(); // 손에 있는 카드 데이터 목록
 
     void Start()
     {
-        
+        deckSystem = FindObjectOfType<deckSystem>();
+        dataManager = FindObjectOfType<DataManager>();
+        cardInHandCount = cardInHand.Count;
+        launchAddCardToHand();
     }
 
     void Update(){
         //UpdateHandVisual();
-        
+        cardInHand = deckSystem.listUpCardInHand();
+        if(cardInHandCount != cardInHand.Count){
+            launchAddCardToHand();
+            cardInHandCount = cardInHand.Count;
+        }
+    }
+
+    public void launchAddCardToHand(){
+        for(int i = 0; i < cardInHand.Count; i++){
+            AddCardToHand(cardInHand[i]);
+        }
     }
 
 
-    public void AddCardToHand(int id)
+    public void AddCardToHand(Card cardData)
     {
         // instantiate card prefab
         GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);  // 카드 프리팹을 인스턴스화하여 새 카드 생성
         
         inHandCards.Add(newCard);               // 새로 생성된 카드를 손에 있는 카드 목록에 추가
-
-        // List<Card> _cardData = deckSystem.listUpPlayerDeck();
-        // Card card_Data = dataManager.GetCardById(id);
-        // Card cardData = _cardData[0];
-        Card cardData = dataManager.GetCardById(id);
 
         //인스턴스화된 카드의 CardData 설정
         newCard.GetComponent<cardDisplay>().cardData = cardData;

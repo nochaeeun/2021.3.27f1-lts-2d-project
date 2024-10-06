@@ -52,6 +52,15 @@ public class EnemyAi : MonoBehaviour
     private List<Action> SpecialActions;
     public int AttackPower;
 
+    public void Start()
+    {
+        // 외부 컨트롤러 초기화
+        gameManager = FindObjectOfType<GameManager>();
+        combatManager = FindObjectOfType<CombatManager>();
+        uiManager = FindObjectOfType<UIManager>();
+        playerManager = FindObjectOfType<charController>();
+    }
+    
     private void Enemy(EnemyID ID){
         eID = ID;
         Actions = new List<Action>();

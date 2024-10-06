@@ -8,6 +8,7 @@ public class deckSystem : MonoBehaviour
     private List<Card> playerDeck = new List<Card>();         // 플레이어가 보유한 카드 덱
     private List<Card> usedDeck = new List<Card>();           // 사용한 카드 더미
     private List<Card> destroyedDeck = new List<Card>();      // 전투에서 소멸한 카드 더미
+    private List<Card> cardInHand = new List<Card>();         // 패에 들어온 카드 더미
 
     private cardManager cardManager;                         // cardManager 참조
     private DataManager dataManager;                         // DataManager 참조
@@ -32,6 +33,7 @@ public class deckSystem : MonoBehaviour
             AddCardToDeck(2001);
         }
         AddCardToDeck(1003);
+        ShuffleDeck();
     }
 
     public List<Card> listUpPlayerDeck(){
@@ -44,6 +46,10 @@ public class deckSystem : MonoBehaviour
 
     public List<Card> listUpDestroyedDeck(){
         return destroyedDeck;
+    }
+
+    public List<Card> listUpCardInHand(){
+        return cardInHand;
     }
 
     // 덱을 초기화하고 시작 카드를 뽑는 메서드
@@ -60,7 +66,7 @@ public class deckSystem : MonoBehaviour
     // }
 
     // 카드를 뽑는 메서드
-    public void DrawCard()
+    public void DrawCard(int amount)
     {
         if (playerDeck.Count == 0)
         {
@@ -75,10 +81,19 @@ public class deckSystem : MonoBehaviour
             }
         }
 
-        ShuffleDeck();
-        Card nextCard = playerDeck[0]; // x로 둔 이유는 카드 덱의 개념이 확실한 상태아니기 때문
-        playerDeck.RemoveAt(0);
-        cardManager.AddCardToHand(nextCard._cardID);
+        Debug.Log($"DrawCard 메서드 시작: amount={amount}, 현재 덱 카드 수={playerDeck.Count}");
+        for (int i = 0; i < amount && playerDeck.Count > 0; i++)
+        {
+            Card drawnCard = playerDeck[0];
+            Debug.Log($"뽑은 카드: ID={drawnCard._cardID}, 이름={drawnCard._cardName}, 비용={drawnCard._cost}");
+            cardInHand.Add(drawnCard);
+            playerDeck.RemoveAt(0);
+            Debug.Log($"카드를 손으로 이동: 현재 손의 카드 수={cardInHand.Count}, 남은 덱 카드 수={playerDeck.Count}");
+            // cardManager.AddCardToHand(drawnCard);
+            Debug.Log($"cardManager.AddCardToHand 호출 완료");
+        }
+        Debug.Log($"DrawCard 메서드 종료: {amount}장의 카드를 뽑았습니다. 현재 손에 있는 카드: {cardInHand.Count}장, 남은 덱 카드 수: {playerDeck.Count}장");
+
     }
 
     // 덱을 섞는 메서드
@@ -150,9 +165,14 @@ public class deckSystem : MonoBehaviour
     public void AddCardToDeck(int cardId)
     {
         // 카드 데이터 목록에서 지정된 이름의 카드 찾기
-        Card specificCardData = dataManager.GetCardById(cardId);
-        Debug.Log(specificCardData._cardID);
-        playerDeck.Add(specificCardData);
+        // Card specificCardData = dataManager.GetCardById(cardId);
+        // Debug.Log($"카드 ID: {dataManager.GetCardById(cardId)._cardID}, 카드 이름: {dataManager.GetCardById(cardId)._cardName}");
+        if(dataManager.GetCardById(cardId) != null){
+            playerDeck.Add(dataManager.GetCardById(cardId));
+        }
+        else{
+            Debug.Log("카드가 없습니다.");
+        }
         // Debug.Log($"'{specificCardData._cardID}' 카드가 플레이어 덱에 추가되었습니다.");
     }
 

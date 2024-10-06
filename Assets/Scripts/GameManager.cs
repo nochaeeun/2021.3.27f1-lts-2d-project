@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public deckSystem deckSystem;
     public charController playerManager;
     public EnemyAi enemyManager;
+    public DataManager dataManager;
     
     public enum GameState { Menu, Combat, Pause, GameOver, Win }
     public GameState currentState = GameState.Menu;
@@ -36,8 +37,32 @@ public class GameManager : MonoBehaviour
     {
         // TODO: 게임 초기화
         // - 필요한 매니저들 초기화
+        dataManager = FindObjectOfType<DataManager>();
+        dataManager.LoadCardData();
+        deckSystem = FindObjectOfType<deckSystem>();
+        cardManager = FindObjectOfType<cardManager>();
+        playerManager = FindObjectOfType<charController>();
+        enemyManager = FindObjectOfType<EnemyAi>();
+        uiManager = FindObjectOfType<UIManager>();
+        combatManager = FindObjectOfType<CombatManager>();
+        // 오브젝트 없다면 생성
+        if(dataManager == null) 
+            dataManager = new GameObject("DataManager").AddComponent<DataManager>();
+        if(deckSystem == null)
+            deckSystem = new GameObject("deckSystem").AddComponent<deckSystem>();
+        if(cardManager == null)
+            cardManager = new GameObject("cardManager").AddComponent<cardManager>();
+        if(playerManager == null)
+            playerManager = new GameObject("playerManager").AddComponent<charController>();
+        if(enemyManager == null)
+            enemyManager = new GameObject("enemyManager").AddComponent<EnemyAi>();
+        if(uiManager == null)
+            uiManager = new GameObject("uiManager").AddComponent<UIManager>();
+        if(combatManager == null)
+            combatManager = new GameObject("combatManager").AddComponent<CombatManager>();
         // - 초기 게임 상태 설정
         deckSystem.InitializeDeck();
+        deckSystem.DrawCard(5);
     }
 
     // Update is called once per frame

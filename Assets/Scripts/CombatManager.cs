@@ -20,6 +20,8 @@ public class CombatManager : MonoBehaviour
         // 전투 초기화
         enemies = new List<EnemyAi>();  // EnemyAi 클래스가 있다고 가정
         player = FindObjectOfType<charController>();  // PlayerBase 클래스가 있다고 가정
+        uiManager = FindObjectOfType<UIManager>();
+        enemy = FindObjectOfType<EnemyAi>();
         currentTurn = 0;
         isPlayerTurn = true;
 
@@ -75,7 +77,7 @@ public class CombatManager : MonoBehaviour
 
         // 카드 드로우
         // player.DrawCards(5); // 예시로 5장 드로우
-        player.deckSystem.DrawCard();
+        player.deckSystem.DrawCard(0);
 
         // 플레이어 행동 처리
         bool turnEnded = false;
@@ -164,7 +166,7 @@ public class CombatManager : MonoBehaviour
                 // 치유 효과 적용
                 break;
             case "draw":
-                player.deckSystem.DrawCard();
+                player.deckSystem.DrawCard(magnitude);
                 break;
             case "cost":
                 player.GainCost(magnitude);

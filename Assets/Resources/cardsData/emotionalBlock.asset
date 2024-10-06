@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 733d0f5849875a14f9096f322dbc1f37, type: 3}
   m_Name: emotionalBlock
   m_EditorClassIdentifier: 
-  _cardID: 0
+  _cardID: 2001
   _cardName: Emotional Blocking
   _cardType: 1
   _cost: 1

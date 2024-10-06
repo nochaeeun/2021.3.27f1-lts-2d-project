@@ -17,11 +17,14 @@ public class cardDisplay : MonoBehaviour
     public TextMeshProUGUI cardType;
     public TextMeshProUGUI cardDescription;
 
+    public deckSystem deckSystem;
+    public cardManager cardManager;
+
     // Start is called before the first frame update
     void Start()
     {
         allcardData = Resources.LoadAll<Card>("cardsData");
-        SetCardData(cardIndex);
+        // SetCardData(deckSystem.listUpCardInHand()[0]); // 카드 생성시 데이터 설정
     }
 
     public void updateCardDisplay() {
@@ -44,7 +47,9 @@ public class cardDisplay : MonoBehaviour
     }    
 
     // Update is called once per frame
-    void Update() {  }
+    void Update() {  
+        updateCardDisplay();
+    }
 
 
     void AdjustFontSize(TextMeshProUGUI textComponent, string content, float min, float max) {
@@ -56,8 +61,14 @@ public class cardDisplay : MonoBehaviour
     }
 
 
-    public void SetCardData(int index) {
-        cardData = allcardData[index];
+    public void SetCardData(int cID) {
+        // 받은 cID를 통해서 allcardData에서 카드 데이터를 찾아서 cardData에 저장
+        foreach(Card card in allcardData){
+            if(card._cardID == cID){
+                cardData = card;
+                break;
+            }
+        }
         updateCardDisplay();
     }
 }

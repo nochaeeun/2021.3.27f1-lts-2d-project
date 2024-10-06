@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using ProjectSCCard;
 
@@ -17,6 +19,8 @@ public class DataManager : MonoBehaviour
 
     // 카드 데이터
     public List<Card> cardDatabase;
+    public Card[] cardDataArray;
+
 
     // 싱글톤 인스턴스
     private static DataManager instance;
@@ -54,12 +58,39 @@ public class DataManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
     }
+
+    public void Start()
+    {
+        // TODO: 데이터 로드
+        // 불러온 외부 컨트롤러 초기화
+        playerManager = FindObjectOfType<charController>();
+        enemyAi = FindObjectOfType<EnemyAi>();
+        gameManager = FindObjectOfType<GameManager>();
+        deckManager = FindObjectOfType<deckSystem>();
+        uiManager = FindObjectOfType<UIManager>();
+        combatManager = FindObjectOfType<CombatManager>();
+        // 없다면 생성
+        if(playerManager == null)
+            playerManager = new GameObject("playerManager").AddComponent<charController>();
+        if(enemyAi == null)
+            enemyAi = new GameObject("enemyAi").AddComponent<EnemyAi>();
+        if(gameManager == null)
+            gameManager = new GameObject("gameManager").AddComponent<GameManager>();
+        if(deckManager == null)
+            deckManager = new GameObject("deckManager").AddComponent<deckSystem>();
+        if(uiManager == null)
+            uiManager = new GameObject("uiManager").AddComponent<UIManager>();
+        if(combatManager == null)
+            combatManager = new GameObject("combatManager").AddComponent<CombatManager>();
+    }
+
     public void LoadCardData()
     {
         // TODO: 카드 데이터 로드
         // - JSON 또는 ScriptableObject에서 카드 정보 로드
         // 리소스 폴더에서 모든 Card ScriptableObject 로드
-        Card[] cardDataArray = Resources.LoadAll<Card>("Prefab/cardsData");
+        cardDataArray = Resources.LoadAll<Card>("cardsData");
+        // Debug.Log($"cardsData 폴더에서 {cardDataArray.Length}개의 카드 데이터를 로드했습니다.");
         
         // 로드된 카드 데이터를 저장할 Dictionary 생성
         cardDatabase = new List<Card>();
@@ -77,7 +108,7 @@ public class DataManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"총 {cardDatabase.Count}개의 카드 데이터가 로드되었습니다.");
+        // Debug.Log($"총 {cardDatabase.Count}개의 카드 데이터가 로드되었습니다.");
     }
 
     public void PlayerDeckData()
@@ -117,13 +148,16 @@ public class DataManager : MonoBehaviour
     public Card GetCardById(int cardId)
     {
         // TODO: ID로 카드 데이터 검색
-        foreach (Card card in cardDatabase)
+        foreach (Card Icard in cardDatabase)
         {
-            if (card._cardID == cardId)
+            // Debug.Log($"카드 ID: {card._cardID}, 카드 이름: {card._cardName}");
+            if (Icard._cardID == cardId)
             {
-                return card; // - 지정된 ID에 해당하는 카드 데이터 반환
+                // Debug.Log($"카드 ID: {card._cardID}, 카드 이름: {card._cardName}");
+                return Icard;
             }
         }
+        // Debug.LogWarning($"ID {cardId}에 해당하는 카드를 찾을 수 없습니다.");
         return null;
     }
 

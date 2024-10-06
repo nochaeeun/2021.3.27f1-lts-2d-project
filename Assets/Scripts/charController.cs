@@ -43,6 +43,17 @@ public class charController : MonoBehaviour
     private int experience;             // 경험치 ( 미구현 할 예정 )
     private int level;                  // 레벨 ( 미구현 할 예정 )
 
+    public void Start()
+    {
+        // 외부 컨트롤러 초기화
+        enemyAi = FindObjectOfType<EnemyAi>();
+        cardManager = FindObjectOfType<cardManager>();
+        deckSystem = FindObjectOfType<deckSystem>();
+        uiManager = FindObjectOfType<UIManager>();
+        combatManager = FindObjectOfType<CombatManager>();
+        gameManager = FindObjectOfType<GameManager>();
+    }
+
     public void Initialize()
     {
         // 월드에 캐릭터가 진입할때 호출.
