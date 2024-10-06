@@ -61,11 +61,11 @@ public class GameManager : MonoBehaviour
 
     public void GameOver() 
     {
-        if (playerManager.isPlayerLose()) // playerManager에서 플레이어 체력을 가져와야함
+        if (playerManager.isPlayerDie()) // playerManager에서 플레이어 체력을 가져와야함
         {
             currentState = GameState.GameOver;
         }
-        else if(enemyManager.Count == 0) // enemyManager에서 적 리스트를 가져와야함
+        else if(enemyManager.Health <= 0) // enemyManager에서 적 리스트를 가져와야함
         {
             currentState = GameState.Win;
         }

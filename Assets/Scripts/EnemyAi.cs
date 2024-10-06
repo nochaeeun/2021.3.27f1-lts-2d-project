@@ -19,9 +19,9 @@ public enum ActionType{
 }
 
 public class Action{
-    private string ActionName;
-    private int _ePower;
-    private ActionType _type;
+    public string ActionName;
+    public int _ePower;
+    public ActionType _type;
     
     public Action(string actionName, int ePower, ActionType type){
         ActionName = actionName;
@@ -88,16 +88,13 @@ public class EnemyAi : MonoBehaviour
                 case ActionType.Attack:
                 break;
                 case ActionType.PlayerCost:
-                playerManager.currentCost -= nextAction._ePower;
-                if(playerManager.currentCost < 0){
-                    playerManager.currentCost = 0;
-                }
+                playerManager.UseCost(nextAction._ePower); // 플레이어 코스트 사용( 회수 )
                 break;
                 // next Time
             }
         }
     }
-    public void UpdateIntention(int ActionIndex, ActionType type){
+    public void UpdateIntention(){
         // 적의 의도UI를 업데이트하는 메서드
         if(nextAction != null){
             Intention = nextAction._type;
@@ -119,6 +116,10 @@ public class EnemyAi : MonoBehaviour
     public void PrepareNextAction(){
         ChooseRandomAction();
         UpdateIntention();
+    }
+
+    public bool IsAlive(){
+        return Health > 0;
     }
 
 

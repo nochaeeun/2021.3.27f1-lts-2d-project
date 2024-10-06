@@ -7,6 +7,16 @@ using ProjectSCCard;
 
 public class DataManager : MonoBehaviour
 {
+    // 외부 컨트롤러
+    public charController playerManager;
+    public EnemyAi enemyAi;
+    public GameManager gameManager;
+    public deckSystem deckManager;
+    public UIManager uiManager;
+    public CombatManager combatManager;
+
+
+
     // 싱글톤 인스턴스
     private static DataManager instance;
 

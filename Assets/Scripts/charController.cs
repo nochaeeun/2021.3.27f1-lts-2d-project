@@ -50,7 +50,7 @@ public class charController : MonoBehaviour
         maxHealth = 50;
         startHealth = 0;
         currentHealth = startHealth;
-        maxEnergy = 5;
+        maxCost = 5;
         currentCost = 0;
         block = 0;
         sadness = 0;
@@ -76,7 +76,7 @@ public class charController : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        private int newDamage;
+        int newDamage;
         // TODO: 데미지 처리
         // - 방어력 고려하여 실제 데미지 계산
         if(block > amount){
@@ -102,6 +102,9 @@ public class charController : MonoBehaviour
         // TODO: 코스트 사용
         // - 현재 코스트에서 amount 차감
         currentCost -= amount;
+        if(currentCost < 0){
+            currentCost = 0;
+        }
     }
 
     public void GainCost(int amount)
@@ -192,6 +195,13 @@ public class charController : MonoBehaviour
 
     public bool isPlayerDie(){
         if(currentHealth >= maxHealth){
+            return true;
+        }
+        return false;
+    }
+
+    public bool healthCheck(){
+        if(currentHealth > 0){
             return true;
         }
         return false;

@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
     {
         bool result = playerEndsTurn;
         playerEndsTurn = false; // 턴 종료 상태 초기화
-        return result;
         Debug.Log("플레이어 턴 종료 됨.");
+        return result;
     }
 }

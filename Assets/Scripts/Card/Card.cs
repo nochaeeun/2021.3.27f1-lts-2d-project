@@ -6,6 +6,8 @@ namespace ProjectSCCard{
     public class Card : ScriptableObject {
         // 변수 필드
         [Header("기본 정보")]
+        [Tooltip("카드 ID")]
+        public string cardId;
         [Tooltip("카드 이름")]
         public string _cardName;
         [Tooltip("카드 타입")]

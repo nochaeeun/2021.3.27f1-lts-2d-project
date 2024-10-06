@@ -76,5 +76,4 @@ public class cardManager : MonoBehaviour
         }
         }
     }
-
 }

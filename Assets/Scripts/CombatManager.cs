@@ -12,6 +12,7 @@ public class CombatManager : MonoBehaviour
     private bool isPlayerTurn;
 
     [SerializeField] private UIManager uiManager; // UI 매니저 참조
+    [SerializeField] private EnemyAi enemy;
 
     // 전투 시작 메서드
     public IEnumerator StartCombat()
@@ -84,11 +85,12 @@ public class CombatManager : MonoBehaviour
 
             // 카드 사용 로직 (여기서는 간단히 처리)
             // 실제로는 선택된 카드에 따라 다양한 효과를 적용해야 함
-            if (player.HasPlayedCard())
-            {
-                Card playedCard = player.GetPlayedCard();
-                ApplyCardEffect(playedCard);
-            }
+            
+            // if (player.HasPlayedCard())
+            // {
+            //     Card playedCard = player.GetPlayedCard();
+            //     ApplyCardEffect(playedCard);
+            // }
 
             turnEnded = true;
         }
@@ -101,39 +103,19 @@ public class CombatManager : MonoBehaviour
     {
         LogCombatAction("적의 턴입니다.");
 
-        foreach (EnemyBase enemy in enemies)
-        {
-            if (enemy.IsAlive())
-            {
-                // 적의 행동 결정
-                EnemyAction action = enemy.DecideAction();
+        enemy.PerformAction();
 
-                // 행동 실행
-                switch (action.type)
-                {
-                    case EnemyActionType.Attack:
-                        int damage = CalculateDamage(action.value, enemy.Attack, player.Defense);
-                        player.TakeDamage(damage);
-                        LogCombatAction($"적이 플레이어에게 {damage}의 데미지를 입혔습니다.");
-                        break;
-                    case EnemyActionType.Defend:
-                        enemy.AddDefense(action.value);
-                        LogCombatAction($"적이 {action.value}의 방어력을 얻었습니다.");
-                        break;
-                    // 다른 행동 타입들...
-                }
-
-                yield return new WaitForSeconds(0.5f); // 각 적의 행동 사이 짧은 대기 시간
-            }
-        }
+        enemy.PrepareNextAction();
 
         LogCombatAction("적의 턴이 종료되었습니다.");
+
+        yield return new WaitForSeconds(0.1f);
     }
 
     // 전투 종료 확인 메서드
     private bool IsCombatOver()
     {
-        if (player.CurrentHP <= 0)
+        if (player.isPlayerDie())
         {
             LogCombatAction("플레이어가 패배했습니다.");
             return true;
@@ -151,11 +133,11 @@ public class CombatManager : MonoBehaviour
     // 전투 결과 처리 메서드
     private void EndCombat()
     {
-        if (player.CurrentHP > 0)
+        if (player.healthCheck())
         {
             // 승리 보상
             int expGained = CalculateExperienceGain();
-            player.GainExperience(expGained);
+            // player.GainExperience(expGained);
             LogCombatAction($"전투에서 승리했습니다! {expGained} 경험치를 획득했습니다.");
 
             // 아이템 획득 등의 추가 보상 로직...
