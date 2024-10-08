@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
             combatManager = new GameObject("combatManager").AddComponent<CombatManager>();
         // - 초기 게임 상태 설정
         deckSystem.InitializeDeck();
-        deckSystem.DrawCard(5);
+        // deckSystem.DrawCard(5);
         StartCombat();
     }
 

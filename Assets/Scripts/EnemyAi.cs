@@ -59,6 +59,17 @@ public class EnemyAi : MonoBehaviour
         combatManager = FindObjectOfType<CombatManager>();
         uiManager = FindObjectOfType<UIManager>();
         playerManager = FindObjectOfType<charController>();
+
+        if(gameManager == null)
+            gameManager = new GameObject("GameManager").AddComponent<GameManager>();
+        if(combatManager == null)
+            combatManager = new GameObject("CombatManager").AddComponent<CombatManager>();
+        if(uiManager == null)
+            uiManager = new GameObject("UIManager").AddComponent<UIManager>();
+        if(playerManager == null)
+            playerManager = new GameObject("PlayerManager").AddComponent<charController>();
+
+        Enemy(EnemyID.Red);
     }
     
     private void Enemy(EnemyID ID){

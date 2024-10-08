@@ -120,14 +120,21 @@ public class deckSystem : MonoBehaviour
     public void UseCard(Card card)
     {
         // 카드를 사용한 더미로 이동
+        Debug.Log($"UseCard 메서드 시작: 카드 ID={card._cardID}, 이름={card._cardName}");
         GameObject cardObject = cardManager.inHandCards.Find(obj => obj.GetComponent<cardDisplay>().cardData == card);
         if(cardObject != null){
+            Debug.Log($"카드 객체를 찾았습니다: {cardObject.name}");
             cardManager.inHandCards.Remove(cardObject);
+            cardInHand.Remove(card);
+            Debug.Log($"카드를 손에서 제거했습니다. 남은 카드 수: {cardManager.inHandCards.Count}");
             usedDeck.Add(card);
+            Debug.Log($"카드를 사용한 더미에 추가했습니다. 사용한 더미 크기: {usedDeck.Count}");
+            
         }
         else{
             Debug.Log("카드가 손에 없습니다.");
         }
+        Debug.Log("UseCard 메서드 종료");
     }
 
     // 카드를 소멸 더미로 이동시키는 메서드
@@ -174,6 +181,14 @@ public class deckSystem : MonoBehaviour
             Debug.Log("카드가 없습니다.");
         }
         // Debug.Log($"'{specificCardData._cardID}' 카드가 플레이어 덱에 추가되었습니다.");
+    }
+
+    public void Discardhand(){
+        foreach(Card card in cardInHand){
+            usedDeck.Add(card);
+        }
+        cardInHand.Clear();
+        cardManager.inHandCards.Clear();
     }
 
     public Card GetRandomCard()

@@ -1067,6 +1067,8 @@ MonoBehaviour:
   cardIllust: []
   cardType: {fileID: 7809884415082853463}
   cardDescription: {fileID: 7809884416027701446}
+  deckSystem: {fileID: 0}
+  cardManager: {fileID: 0}
 --- !u!61 &5623066012504933613
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1111,6 +1113,8 @@ MonoBehaviour:
   glowEffect: {fileID: 8194627309472419538}
   playArrow: {fileID: 7314933436326897643}
   cardPlayThreshold: 0.4
+  combatManager: {fileID: 0}
+  cam: {fileID: 0}
 --- !u!1 &8194627309472419538
 GameObject:
   m_ObjectHideFlags: 0

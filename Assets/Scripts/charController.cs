@@ -101,6 +101,10 @@ public class charController : MonoBehaviour
         }
     }
 
+    public int getBlock(){
+        return block;
+    }
+
     public void GainBlock(int amount)
     {
         // TODO: 방어력 증가
@@ -180,7 +184,7 @@ public class charController : MonoBehaviour
             currentCost = maxCost;
         }
         // - 카드 드로우
-        
+        deckSystem.DrawCard(5);
         // - 턴 시작 효과 적용
     }
 
@@ -188,6 +192,8 @@ public class charController : MonoBehaviour
     {
         // TODO: 턴 종료 처리
         // - 남은 카드 버리기
+        // deckSystem.DiscardHand();
+
         // - 턴 종료 효과 적용
         if(sadness > 0){
             sadness--;
@@ -195,6 +201,7 @@ public class charController : MonoBehaviour
         if(!keepBlock){
             block = 0;
         }
+        uiManager.CallEndTurn();
     }
 
     // public void UpdateStats()

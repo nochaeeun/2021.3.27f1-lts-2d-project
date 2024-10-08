@@ -10,12 +10,19 @@ public class CombatManager : MonoBehaviour
     private charController player;          // PlayerBase 클래스가 있다고 가정
     private int currentTurn;
     private bool isPlayerTurn;
+    public bool turnEndButtonDown;
 
     public GameObject enemyObj;
     public GameObject playerObj;
 
     [SerializeField] private UIManager uiManager; // UI 매니저 참조
     [SerializeField] private EnemyAi enemy;
+
+    void Start(){
+        enemyObj = GameObject.FindWithTag("Enemy");
+        playerObj = GameObject.FindWithTag("Player");
+        enemy = enemyObj.GetComponent<EnemyAi>();
+    }
 
     // 전투 시작 메서드
     public IEnumerator StartCombat()
@@ -25,10 +32,15 @@ public class CombatManager : MonoBehaviour
         player = FindObjectOfType<charController>();  // PlayerBase 클래스가 있다고 가정
         uiManager = FindObjectOfType<UIManager>();
         enemy = FindObjectOfType<EnemyAi>();
+
+        
+        // enemyObj = GameObject.FindWithTag("Enemy");
+        // playerObj = GameObject.FindWithTag("Player");
+        // enemy = enemyObj.GetComponent<EnemyAi>();
+
+
         currentTurn = 0;
         isPlayerTurn = true;
-        enemyObj = GameObject.FindGameObjectWithTag("Enemy");
-        playerObj = GameObject.FindGameObjectWithTag("Player");
 
         // 적 생성 (임시로 한 마리만 생성)
         EnemyAi newEnemy = new EnemyAi(); // EnemyAi 클래스가 있다고 가정
@@ -80,22 +92,14 @@ public class CombatManager : MonoBehaviour
     {
         LogCombatAction("플레이어의 턴입니다.");
 
+        enemy.PrepareNextAction();
+
         // 카드 드로우
         // player.DrawCards(5); // 예시로 5장 드로우
-        player.deckSystem.DrawCard(0);
-
-        // 플레이어 행동 처리
-        bool turnEnded = false;
-        while (!turnEnded)
-        {
-            // 플레이어의 입력을 기다림
-            yield return new WaitUntil(() => uiManager.IsPlayerTurnEnded());
-
-            // 플레이어가 카드를 사용하는 부분
-
-            
-
-            turnEnded = true;
+        // player.deckSystem.DrawCard(0);
+        if(turnEndButtonDown){
+            player.EndTurn();
+            yield return new WaitForSeconds(0.1f);
         }
 
         LogCombatAction("플레이어의 턴이 종료되었습니다.");
@@ -167,7 +171,7 @@ public class CombatManager : MonoBehaviour
     }
 
     // 효과 적용 메서드
-    public void ApplyEffect(string effectType, int magnitude)
+    public void ApplyEffect(string effectType, int magnitude, Card card)
     {
         // 다양한 효과 (버프/디버프 등) 적용 로직 구현
         switch (effectType)
@@ -182,7 +186,7 @@ public class CombatManager : MonoBehaviour
                 player.Heal(magnitude);
                 break;
             case "bash":
-                enemy.eTakeDamage(player.block);
+                enemy.eTakeDamage(player.getBlock());
                 break;
             case "draw":
                 player.deckSystem.DrawCard(magnitude);
@@ -198,8 +202,8 @@ public class CombatManager : MonoBehaviour
                 break;
             // 기타 효과들...
         }
-        if(card._effectType2 != EffectType.none){
-            ApplyEffect(card._effectType2.ToString(), card._effectMagnitude2);
+        if(card._effectType2 != Card.EffectType.none){
+            ApplyEffect(card._effectType2.ToString(), card._effectMagnitude2, card);
         }
     }
 
@@ -214,12 +218,15 @@ public class CombatManager : MonoBehaviour
     {
         // 카드 효과 적용 로직
         // 예: 데미지, 방어력 증가, 버프/디버프 등
+        Debug.Log($"카드 효과 적용: {card._cardType}");
         switch(card._cardType.ToString()){
                 case "attack":
-                    enemy.eTakeDamage(card._damage);
+                    Debug.Log($"공격 데미지 : {card._damage}");
+                    int damage = card._damage;
+                    enemy.eTakeDamage(damage);
                     break;
                 case "skill":
-                    ApplyEffect(card._effectType.ToString(), card._effectMagnitude, player.gameObject);
+                    ApplyEffect(card._effectType.ToString(), card._effectMagnitude, card);
                     break;
                 case "shield":
                     player.GainBlock(card._shield);
@@ -242,6 +249,13 @@ public class CombatManager : MonoBehaviour
         }
         
     }
+
+
+    // public void playCardToGrid(Card card, Vector2 gridPosition){
+    //     if(gridPosition.x >= 0 && gridPosition.x < width && gridPosition.y >= 0 && gridPosition.y < height){
+
+    //     }
+    // }
 }
 
 // 전체 코드 설명:

@@ -5,17 +5,20 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField]
-    private Button turnEndButton;
+    [SerializeField] private Button turnEndButton;
 
     private bool playerEndsTurn = false;
 
     private Sprite[] enemyIntention;
 
+    private charController player;
+    private CombatManager combatManager;
+
     private void Start()
     {
         enemyIntention = Resources.LoadAll<Sprite>("EnemyIntention");
-
+        player = FindObjectOfType<charController>();
+        combatManager = FindObjectOfType<CombatManager>();
 
         if (turnEndButton != null)
         {
@@ -23,7 +26,8 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("턴 엔드 버튼이 할당되지 않았습니다.");
+            turnEndButton = GameObject.Find("Button_TurnEnd").GetComponent<Button>();
+            turnEndButton.onClick.AddListener(EndTurn);
         }
     }
 
@@ -37,9 +41,13 @@ public class UIManager : MonoBehaviour
         // 적 스텟 업데이트
     }
 
+    public void CallEndTurn(){
+        EndTurn();
+    }
+
     private void EndTurn()
     {
-        playerEndsTurn = true;
+        combatManager.turnEndButtonDown = true;
         Debug.Log("턴 종료 버튼이 눌렸습니다.");
     }
 

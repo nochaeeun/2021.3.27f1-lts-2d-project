@@ -85,16 +85,16 @@ public class cardManager : MonoBehaviour
 
 
             for(int i = 0; i < cardCount; i++){
-            float rotationAngle = (cardSpread * (i - (cardCount - 1) / 2f));                                 // 카드의 회전 각도 계산
-            inHandCards[i].transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);                // 계산된 각도로 카드 회전
+                float rotationAngle = (cardSpread * (i - (cardCount - 1) / 2f));                                 // 카드의 회전 각도 계산
+                inHandCards[i].transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);                // 계산된 각도로 카드 회전
 
-            float horizontalOffset = (cardSpacing * (i - (cardCount - 1) / 2f));                             // 카드의 수평 위치 계산
+                float horizontalOffset = (cardSpacing * (i - (cardCount - 1) / 2f));                             // 카드의 수평 위치 계산
 
-            float normalPosition = (2f * i / (cardCount - 1) - 1f);                                          // 카드의 정규화된 위치 계산 (-1에서 1 사이)
+                float normalPosition = (2f * i / (cardCount - 1) - 1f);                                          // 카드의 정규화된 위치 계산 (-1에서 1 사이)
 
-            float verticalOffset = verticalSpacing * (1f - normalPosition * normalPosition);                 // 카드의 수직 위치 계산 (포물선 형태)
-            inHandCards[i].transform.localPosition = new Vector3(horizontalOffset, verticalOffset, 0f);      // 카드의 최종 위치 설정
-        }
+                float verticalOffset = verticalSpacing * (1f - normalPosition * normalPosition);                 // 카드의 수직 위치 계산 (포물선 형태)
+                inHandCards[i].transform.localPosition = new Vector3(horizontalOffset, verticalOffset, 0f);      // 카드의 최종 위치 설정
+            }
         }
     }
 }

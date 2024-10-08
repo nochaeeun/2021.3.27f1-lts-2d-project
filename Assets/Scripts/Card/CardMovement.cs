@@ -37,6 +37,11 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
     [SerializeField] private float cardPlayThreshold = 0.7f;
 
     public CombatManager combatManager;
+    public deckSystem deckSystem;
+
+
+    public Camera cam;
+    private int layerMask;
 
 
 
@@ -47,11 +52,13 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         canvas = GetComponentInParent<Canvas>();
 
         combatManager = FindObjectOfType<CombatManager>();
+        deckSystem = FindObjectOfType<deckSystem>();
 
         originalScale = rectTransform.localScale;
         originalPos = rectTransform.localPosition;
         originalRotation = rectTransform.localRotation;
         //Debug.Log("1-02");
+        layerMask = LayerMask.GetMask("PlayCard");
     }
 
     // 매 프레임마다 현재 상태에 따른 처리
@@ -69,9 +76,6 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                 break;
             case 3:
                 HandlePlayState();
-                if(!Input.GetMouseButton(0)) {
-                    TransitionToState0();
-                }
                 break;
         }
         //Debug.Log("1-04");
@@ -168,27 +172,50 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         rectTransform.localRotation = Quaternion.identity;
 
         if(!Input.GetMouseButton(0)){                                         // 전투관련 코드 : 마우스 왼쪽 버튼이 눌리지 않았을 때
+            Debug.Log("카드 플레이 시작");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);      // 전투관련 코드 : 마우스 위치에서 레이 생성
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);  // 전투관련 코드 : 레이를 캐스트하여 충돌 감지
-            Card selectedCard = GetComponent<cardDisplay>().cardData;
+            // 레이를 시각화하기 위한 디버그 라인 그리기
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2f);
+            // Debug.Log($"레이 생성: {ray.origin}, {ray.direction}");
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, layerMask);  // 전투관련 코드 : 레이를 캐스트하여 충돌 감지
+            // RaycastHit2D hit = Physics2D.Raycast(wPoint, Vector2.zero, Mathf.Infinity, layerMask);
+            Debug.Log($"레이캐스트 결과: {hit.collider != null}");
+            Card selectedCard = GetComponent<cardDisplay>().GetCard();
+            //GetComponent<cardDisplay>().cardData;
+            Debug.Log($"선택된 카드: {selectedCard.name}");
 
             if(hit.collider != null){
+                Debug.Log($"레이가 충돌한 오브젝트: {hit.collider.gameObject.name}");
                 if(hit.collider.CompareTag("Enemy")){
+                    Debug.Log("적 오브젝트와 충돌했습니다.");
                     // 적에게 플레이
                 if (currentState == 3 && selectedCard._target == Card.Target.Enemy)
                 {
+                    Debug.Log("현재 상태와 카드 대상 확인: currentState = " + currentState + ", selectedCard._target = " + selectedCard._target);
                     // 적에게 카드 효과 적용
                     EnemyAi enemy = hit.collider.GetComponent<EnemyAi>();
+                    Debug.Log("적 컴포넌트 가져오기: " + (enemy != null ? "성공" : "실패"));
                     if (enemy != null)
                     {
+                        Debug.Log("적에게 카드 효과를 적용합니다.");
                         // 카드 효과 실행
+                        Debug.Log("카드 효과 실행 전: selectedCard = " + selectedCard.name);
                         combatManager.CardEffect(selectedCard);
-                        
+                        Debug.Log("카드 효과 실행 후");
+
                         // 카드 사용 후 처리
+                        Debug.Log("카드 사용 후 처리 시작");
+                        deckSystem.UseCard(selectedCard);
+                        Debug.Log("deckSystem.UseCard 호출 완료");
+                        selectedCard = null;
+                        Debug.Log("selectedCard를 null로 설정");
+                        Debug.Log("게임 오브젝트 파괴 전");
                         Destroy(gameObject);
+                        Debug.Log("게임 오브젝트 파괴 후");
                     }
                 }
                 } else if (hit.collider.CompareTag("Player")){
+                    Debug.Log("플레이어 오브젝트와 충돌했습니다.");
                     // 플레이어에게 플레이
                     if (currentState == 3 && selectedCard._target == Card.Target.Self)
                     {
@@ -196,16 +223,21 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                         charController player = hit.collider.GetComponent<charController>();
                         if (player != null)
                         {
+                            Debug.Log("플레이어에게 카드 효과를 적용합니다.");
                             // 카드 효과 실행
                             combatManager.CardEffect(selectedCard);
                             
                             // 카드 사용 후 처리
+                            selectedCard = null;
                             Destroy(gameObject);
                         }
                     }
                 }
+            } else {
+                Debug.Log("레이가 어떤 오브젝트와도 충돌하지 않았습니다.");
+                selectedCard = null;
             }
-
+            TransitionToState0();
         }
         // 코드 수정 후
         if(Input.mousePosition.y <= Screen.height * cardPlayThreshold){
