@@ -76,6 +76,25 @@ public class deckSystem : MonoBehaviour
     //     }
     // }
 
+    public Card DrawSingleCard(){
+        if(playerDeck.Count > 0){
+            Card drawnCard = playerDeck[0];
+            playerDeck.RemoveAt(0);
+            cardInHand.Add(drawnCard);
+            cardManager.AddCardToHand(drawnCard);
+            Debug.Log($"카드를 손으로 한 장 이동: 현재 손의 카드 수={cardInHand.Count}, 남은 덱 카드 수={playerDeck.Count}");
+            return drawnCard;
+        } else {
+            Debug.LogWarning("덱에 카드가 없습니다. 사용한 카드 더미에서 카드를 덱으로 불러옵니다.");
+            ResetDeck();
+            Card drawnCard = playerDeck[0];
+            cardInHand.Add(drawnCard);
+            cardManager.AddCardToHand(drawnCard);
+            playerDeck.RemoveAt(0);
+            return drawnCard;
+        }
+    }
+
     // 카드를 뽑는 메서드
     public void DrawCard(int amount)
     {

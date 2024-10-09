@@ -18,6 +18,7 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] private UIManager uiManager; // UI 매니저 참조
     [SerializeField] private EnemyAi enemy;
+    [SerializeField] private cardManager cardManager;
 
 
 
@@ -29,7 +30,7 @@ public class CombatManager : MonoBehaviour
         player = FindObjectOfType<charController>();  // PlayerBase 클래스가 있다고 가정
         uiManager = FindObjectOfType<UIManager>();
         enemy = FindObjectOfType<EnemyAi>();
-
+        cardManager = FindObjectOfType<cardManager>();
         Debug.Log("전투 초기화 완료");
         
         enemyObj = GameObject.FindWithTag("Enemy");
@@ -236,7 +237,10 @@ public class CombatManager : MonoBehaviour
                 enemy.eTakeDamage(player.getBlock());
                 break;
             case "draw":
-                player.deckSystem.DrawCard(magnitude);
+                // player.deckSystem.DrawCard(magnitude);
+                cardManager.inHandCardData.Remove(card);
+                player.deckSystem.DrawSingleCard();
+                Debug.Log($"카드 수 : {cardManager.inHandCardData.Count}");
                 break;
             case "cost":
                 player.GainCost(magnitude); // 추후 다음턴 로직 추가
@@ -271,6 +275,9 @@ public class CombatManager : MonoBehaviour
                     Debug.Log($"공격 데미지 : {card._damage}");
                     int damage = card._damage;
                     enemy.eTakeDamage(damage);
+                    if(card._effectType != Card.EffectType.none){
+                        ApplyEffect(card._effectType.ToString(), card._effectMagnitude, card);
+                    }
                     break;
                 case "skill":
                     ApplyEffect(card._effectType.ToString(), card._effectMagnitude, card);

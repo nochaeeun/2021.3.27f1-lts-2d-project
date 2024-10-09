@@ -92,7 +92,7 @@ public class cardManager : MonoBehaviour
         inHandCardData.Clear();
     }
 
-    private void UpdateHandVisual()
+    public void UpdateHandVisual()
     {
         int cardCount = inHandCards.Count;
 

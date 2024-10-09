@@ -137,6 +137,10 @@ public class charController : MonoBehaviour, ICharacter
             currentCost += amount;
     }
 
+    public int GetCostAmount(){
+        return currentCost;
+    }
+
     // public void ApplyBuff(BuffType buffType, int amount)
     // {
         // TODO: 버프 적용

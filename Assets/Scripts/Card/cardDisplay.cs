@@ -34,13 +34,17 @@ public class cardDisplay : MonoBehaviour
     void Start()
     {
         // Resources 폴더에서 모든 Card 타입의 에셋을 로드하여 allcardData에 저장
+        
+        cardManager = FindObjectOfType<cardManager>();
+        deckSystem = FindObjectOfType<deckSystem>();
+
         allcardData = Resources.LoadAll<Card>("cardsData");
         // 주석 처리된 코드: 첫 번째 카드 데이터로 카드 표시를 설정
         // SetCardData(deckSystem.listUpCardInHand()[0]);
     }
 
     // 카드 디스플레이를 업데이트하는 메서드
-    public void updateCardDisplay() {
+    private void updateCardDisplay() {
         // 카드 비용 표시
         cardCost.text = cardData._cost.ToString();
         // 카드 이름 표시
