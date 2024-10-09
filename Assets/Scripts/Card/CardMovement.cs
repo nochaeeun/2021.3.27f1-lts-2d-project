@@ -38,6 +38,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
     public CombatManager combatManager;
     public deckSystem deckSystem;
+    public cardManager cardManager;
 
 
     public Camera cam;
@@ -53,6 +54,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
         combatManager = FindObjectOfType<CombatManager>();
         deckSystem = FindObjectOfType<deckSystem>();
+        cardManager = FindObjectOfType<cardManager>();
 
         originalScale = rectTransform.localScale;
         originalPos = rectTransform.localPosition;
@@ -183,10 +185,33 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
             Card selectedCard = GetComponent<cardDisplay>().GetCard();
             //GetComponent<cardDisplay>().cardData;
             Debug.Log($"선택된 카드: {selectedCard.name}");
-
+            ICharacter character = hit.collider.GetComponent<ICharacter>();
+            Debug.Log($"캐릭터 컴포넌트 가져오기: {character != null}");
             if(hit.collider != null){
-                Debug.Log($"레이가 충돌한 오브젝트: {hit.collider.gameObject.name}");
-                if(hit.collider.CompareTag("Enemy")){
+                Debug.Log(character.IsPlayer ? "플레이어와 충돌" : "적과 충돌");
+                Debug.Log($"충돌한 오브젝트의 태그: {hit.collider.tag}");
+
+                // if(currentState == 3 && ((!character.IsPlayer && selectedCard._target == Card.Target.Enemy) || 
+                //                         (character.IsPlayer && selectedCard._target == Card.Target.Self))){
+                //                             Debug.Log($"현재 상태와 카드 대상 확인 : currentState = {currentState}, selectedCard._target = {selectedCard._target}");
+
+                //                             Debug.Log("대상에게 카드 효과 적용");
+                //                             Debug.Log($"카드 효과 적용 전: selectedCard = {selectedCard.name}");
+                //                             combatManager.CardEffect(selectedCard);
+                //                             Debug.Log($"카드 효과 적용 후");
+
+                //                             Debug.Log("카드 사용 후 처리 시작");
+                //                             deckSystem.UseCard(selectedCard);
+                //                             Debug.Log("deckSystem.UseCard 호출 완료");
+                //                             selectedCard = null;
+                //                             Debug.Log("selectedCard를 null로 설정");
+                //                             cardManager.inHandCards.Remove(this.gameObject);
+                //                             Debug.Log("게임 오브젝트 파괴 전");
+                //                             Destroy(this.gameObject);
+                //                             Debug.Log("게임 오브젝트 파괴 후");
+                //                         }
+
+                if(hit.collider.GetComponent<EnemyAi>() != null){
                     Debug.Log("적 오브젝트와 충돌했습니다.");
                     // 적에게 플레이
                 if (currentState == 3 && selectedCard._target == Card.Target.Enemy)
@@ -209,12 +234,14 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                         Debug.Log("deckSystem.UseCard 호출 완료");
                         selectedCard = null;
                         Debug.Log("selectedCard를 null로 설정");
+                        cardManager.inHandCards.Remove(this.gameObject);
                         Debug.Log("게임 오브젝트 파괴 전");
-                        Destroy(gameObject);
+                        // cardManager.cardInHandCount--;
+                        Destroy(this.gameObject);
                         Debug.Log("게임 오브젝트 파괴 후");
                     }
                 }
-                } else if (hit.collider.CompareTag("Player")){
+                } else if (hit.collider.GetComponent<charController>() != null){
                     Debug.Log("플레이어 오브젝트와 충돌했습니다.");
                     // 플레이어에게 플레이
                     if (currentState == 3 && selectedCard._target == Card.Target.Self)
@@ -228,16 +255,18 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                             combatManager.CardEffect(selectedCard);
                             
                             // 카드 사용 후 처리
+                            deckSystem.UseCard(selectedCard);
                             selectedCard = null;
-                            Destroy(gameObject);
+                            cardManager.inHandCards.Remove(this.gameObject);
+                            Destroy(this.gameObject);
                         }
                     }
                 }
             } else {
                 Debug.Log("레이가 어떤 오브젝트와도 충돌하지 않았습니다.");
+                TransitionToState0();
                 selectedCard = null;
             }
-            TransitionToState0();
         }
         // 코드 수정 후
         if(Input.mousePosition.y <= Screen.height * cardPlayThreshold){

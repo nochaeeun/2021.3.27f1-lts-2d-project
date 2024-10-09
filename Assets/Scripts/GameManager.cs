@@ -62,8 +62,10 @@ public class GameManager : MonoBehaviour
             combatManager = new GameObject("combatManager").AddComponent<CombatManager>();
         // - 초기 게임 상태 설정
         deckSystem.InitializeDeck();
+        playerManager.Initialize();
         // deckSystem.DrawCard(5);
-        StartCombat();
+        Debug.Log("전투 시작");
+        StartCoroutine(combatManager.StartCombat());
     }
 
     // Update is called once per frame
@@ -79,13 +81,16 @@ public class GameManager : MonoBehaviour
         // - 첫 번째 맵 생성
     }
 
-    public void StartCombat() 
-    {
-        // TODO: 전투 시작
-        // - 전투 초기화
-        combatManager.StartCombat();
-        currentState = GameState.Combat;
-    }
+    // public void StartCombat() 
+    // {
+    //     // TODO: 전투 시작
+    //     // - 전투 초기화
+    //     Debug.Log("-전투 시작");
+    //     StartCoroutine(combatManager.StartCombat());
+    //     Debug.Log("전투 시작 완료");
+    //     currentState = GameState.Combat;
+
+    // }
 
     public void GameOver() 
     {

@@ -18,6 +18,12 @@ public enum ActionType{
     Defence
 }
 
+public enum EnemyType{
+    elite,
+    boss,
+    normal
+}
+
 public class Action{
     public string ActionName;
     public int _ePower;
@@ -30,8 +36,9 @@ public class Action{
     }
 }
 
-public class EnemyAi : MonoBehaviour
+public class EnemyAi : MonoBehaviour, ICharacter
 {
+    public bool IsPlayer => false;
     // 외부 컨트롤러
     public GameManager gameManager;
     public CombatManager combatManager;
@@ -68,25 +75,35 @@ public class EnemyAi : MonoBehaviour
             uiManager = new GameObject("UIManager").AddComponent<UIManager>();
         if(playerManager == null)
             playerManager = new GameObject("PlayerManager").AddComponent<charController>();
+    }
 
+    public void CallEnemy(){
         Enemy(EnemyID.Red);
     }
     
     private void Enemy(EnemyID ID){
         eID = ID;
         Actions = new List<Action>();
+        SpecialActions = new List<Action>();
         switch(ID){
             case EnemyID.Red:
             Name = "Red";
             Health = 40;
             Block = 0;
-
+            Debug.Log("적 행동 초기화 시작");
             Actions.Add(new Action("UnKnown1", 9, ActionType.Attack));
+            Debug.Log("UnKnown1 행동 추가됨: 공격력 9");
             Actions.Add(new Action("UnKnown2", 11, ActionType.Attack));
+            Debug.Log("UnKnown2 행동 추가됨: 공격력 11");
             Actions.Add(new Action("UnKnown3", 14, ActionType.Attack));
+            Debug.Log("UnKnown3 행동 추가됨: 공격력 14");
             Actions.Add(new Action("UnKnown4", 15, ActionType.Attack));
+            Debug.Log("UnKnown4 행동 추가됨: 공격력 15");
 
+            Debug.Log("특수 행동 리스트 초기화됨");
             SpecialActions.Add(new Action("UnKnown5", 2, ActionType.PlayerCost));
+            Debug.Log("특수 행동 UnKnown5 추가됨: 플레이어 코스트 2 감소");
+            Debug.Log("적 행동 초기화 완료");
             break;
         }
     }

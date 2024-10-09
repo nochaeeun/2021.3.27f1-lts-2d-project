@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectSCCard;
 
-public class charController : MonoBehaviour
+public class charController : MonoBehaviour, ICharacter
 {
+    public bool IsPlayer => true;
+
     // 외부 컨트롤러
     public EnemyAi enemyAi;
     public cardManager cardManager;
@@ -52,6 +54,9 @@ public class charController : MonoBehaviour
         uiManager = FindObjectOfType<UIManager>();
         combatManager = FindObjectOfType<CombatManager>();
         gameManager = FindObjectOfType<GameManager>();
+
+        if(combatManager == null)
+            combatManager = new GameObject("CombatManager").AddComponent<CombatManager>();
     }
 
     public void Initialize()
@@ -65,8 +70,8 @@ public class charController : MonoBehaviour
         currentCost = 0;
         block = 0;
         sadness = 0;
-        hand.Clear();
-        discardPile.Clear();
+        hand = new List<Card>();
+        discardPile = new List<Card>();
         // - 기본 스탯 설정 : 플레이어 스탯의 대한 내용은 아직 
 
         // - 시작 덱 생성 deck = new List<Card>();
@@ -79,8 +84,8 @@ public class charController : MonoBehaviour
         currentCost = 3;
         block = 0;
         sadness = 0;
-        hand.Clear();
-        discardPile.Clear();
+        hand = new List<Card>();
+        discardPile = new List<Card>();
     }
 
     // public void ResetForCombat(){}
@@ -201,7 +206,7 @@ public class charController : MonoBehaviour
         if(!keepBlock){
             block = 0;
         }
-        uiManager.CallEndTurn();
+        // combatManager.isPlayerTurn = false;
     }
 
     // public void UpdateStats()

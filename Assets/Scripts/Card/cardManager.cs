@@ -3,98 +3,135 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProjectSCCard;
 using UnityEngine.UI;
+using System.Linq;
 
 public class cardManager : MonoBehaviour
 {
-
-    // 여기서는 패에 들어온 카드만 관리하기로 합시다.
-
     public deckSystem deckSystem;
     public DataManager dataManager;
     public List<Card> cardInHand = new List<Card>();
 
     private int cardInHandCount = 0;
 
-    public GameObject cardPrefab; // 인스펙터에서 카드 프리팹 할당
-    public Transform handTransform; // 손 위치 (임의로 일단 할당)
+    public GameObject cardPrefab;
+    public Transform handTransform;
 
-    public float cardSpread = 7.5f; // 카드 간 각도
+    public float cardSpread = 7.5f;
+    public float cardSpacing = -166f;
+    public float verticalSpacing = 49f;
 
-    public float cardSpacing = -166f;  // 카드 간격
+    public List<GameObject> inHandCards = new List<GameObject>();
+    public List<Card> inHandCardData = new List<Card>();
+    public Dictionary<Card, int> cardInstanceIDs = new Dictionary<Card, int>(); // 카드 데이터와 인스턴스 ID를 매핑
 
-    public float verticalSpacing = 49f; // ???
-
-    public List<GameObject> inHandCards = new List<GameObject>(); // 손에 있는 카드 목록
-    
-    public List<Card> inHandCardData = new List<Card>(); // 손에 있는 카드 데이터 목록
+    private Transform playerHandPoint;
 
     void Start()
     {
         deckSystem = FindObjectOfType<deckSystem>();
         dataManager = FindObjectOfType<DataManager>();
         cardInHandCount = cardInHand.Count;
+        playerHandPoint = GameObject.Find("playerHandPoint").transform;
         launchAddCardToHand();
+        CleanupUnusedCards();
     }
 
-    void Update(){
-        //UpdateHandVisual();
+    void Update()
+    {
         cardInHand = deckSystem.listUpCardInHand();
-        if(cardInHandCount != cardInHand.Count){
+        if (cardInHandCount != cardInHand.Count)
+        {
+            ClearHandCards();
             launchAddCardToHand();
             cardInHandCount = cardInHand.Count;
+            CleanupUnusedCards();
         }
     }
 
-    public void launchAddCardToHand(){
-        for(int i = 0; i < cardInHand.Count; i++){
+    public void launchAddCardToHand()
+    {
+        for (int i = 0; i < cardInHand.Count; i++)
+        {
             AddCardToHand(cardInHand[i]);
         }
     }
 
-
     public void AddCardToHand(Card cardData)
     {
-        // instantiate card prefab
-        GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);  // 카드 프리팹을 인스턴스화하여 새 카드 생성
-        
-        inHandCards.Add(newCard);               // 새로 생성된 카드를 손에 있는 카드 목록에 추가
-
-        //인스턴스화된 카드의 CardData 설정
+        GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);
+        inHandCards.Add(newCard);
+        inHandCardData.Add(cardData);
+        cardInstanceIDs[cardData] = newCard.GetInstanceID(); // 인스턴스 ID 저장
         newCard.GetComponent<cardDisplay>().cardData = cardData;
-        UpdateHandVisual();                     // 손에 있는 카드들의 시각적 배치를 업데이트
+        UpdateHandVisual();
     }
 
-    // UpdateHandVisual 함수는 손에 있는 카드들의 시각적 배치를 업데이트합니다.
-    // 각 카드의 회전 각도, 수평 및 수직 위치를 계산하여 설정합니다.
-    // 카드 간의 간격과 회전 각도는 cardSpacing과 cardSpread 변수를 통해 조절됩니다.
-    private void UpdateHandVisual(){
+    public void RemoveCardFromHand(Card cardData)
+    {
+        int index = inHandCardData.IndexOf(cardData);
+        if (index != -1)
+        {
+            GameObject cardToRemove = inHandCards[index];
+            cardToRemove.SetActive(false); // 오브젝트를 비활성화합니다.
+            Destroy(cardToRemove);
+            inHandCards.RemoveAt(index);
+            inHandCardData.RemoveAt(index);
+            cardInstanceIDs.Remove(cardData); // 인스턴스 ID 제거
+            UpdateHandVisual();
+        }
+    }
+
+    private void ClearHandCards()
+    {
+        foreach (GameObject card in inHandCards)
+        {
+            card.SetActive(false); // 오브젝트를 비활성화합니다.
+            Destroy(card);
+        }
+        inHandCards.Clear();
+        inHandCardData.Clear();
+    }
+
+    private void UpdateHandVisual()
+    {
         int cardCount = inHandCards.Count;
 
-
-        // 카드 추가 시 cardSpread와 cardSpacing 업데이트
-        if(inHandCards.Count == 0) return;
-        else if(inHandCards.Count == 1) {
-            inHandCards[0].transform.localPosition = new Vector3(0f,0f,0f);
-            inHandCards[0].transform.localRotation = Quaternion.Euler(0f,0f,0f);
+        if (cardCount == 0) return;
+        else if (cardCount == 1)
+        {
+            inHandCards[0].transform.localPosition = Vector3.zero;
+            inHandCards[0].transform.localRotation = Quaternion.identity;
         }
-        else{
-            // 카드 수에 따라 cardSpread 조정 (5장일 때 7.5f)
+        else
+        {
             cardSpread = 7.5f * 5f / cardCount;
-            // 카드 수에 따라 cardSpacing 조정 (5장일 때 -166f)
             cardSpacing = -166f * 5f / cardCount;
 
+            for (int i = 0; i < cardCount; i++)
+            {
+                float rotationAngle = (cardSpread * (i - (cardCount - 1) / 2f));
+                inHandCards[i].transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);
 
-            for(int i = 0; i < cardCount; i++){
-                float rotationAngle = (cardSpread * (i - (cardCount - 1) / 2f));                                 // 카드의 회전 각도 계산
-                inHandCards[i].transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);                // 계산된 각도로 카드 회전
-
-                float horizontalOffset = (cardSpacing * (i - (cardCount - 1) / 2f));                             // 카드의 수평 위치 계산
-
-                float normalPosition = (2f * i / (cardCount - 1) - 1f);                                          // 카드의 정규화된 위치 계산 (-1에서 1 사이)
-
-                float verticalOffset = verticalSpacing * (1f - normalPosition * normalPosition);                 // 카드의 수직 위치 계산 (포물선 형태)
-                inHandCards[i].transform.localPosition = new Vector3(horizontalOffset, verticalOffset, 0f);      // 카드의 최종 위치 설정
+                float horizontalOffset = (cardSpacing * (i - (cardCount - 1) / 2f));
+                float normalPosition = (2f * i / (cardCount - 1) - 1f);
+                float verticalOffset = verticalSpacing * (1f - normalPosition * normalPosition);
+                inHandCards[i].transform.localPosition = new Vector3(horizontalOffset, verticalOffset, 0f);
             }
+        }
+    }
+
+    private void CleanupUnusedCards()
+    {
+        List<GameObject> playerHandCards = new List<GameObject>();
+        foreach (Transform child in playerHandPoint)
+        {
+            playerHandCards.Add(child.gameObject);
+        }
+
+        List<GameObject> cardsToDestroy = playerHandCards.Except(inHandCards).ToList();
+        foreach (GameObject card in cardsToDestroy)
+        {
+            Destroy(card);
         }
     }
 }

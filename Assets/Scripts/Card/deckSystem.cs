@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ProjectSCCard;
+using System.Linq;
 
 public class deckSystem : MonoBehaviour
 {
@@ -10,8 +11,9 @@ public class deckSystem : MonoBehaviour
     private List<Card> destroyedDeck = new List<Card>();      // 전투에서 소멸한 카드 더미
     private List<Card> cardInHand = new List<Card>();         // 패에 들어온 카드 더미
 
-    private cardManager cardManager;                         // cardManager 참조
-    private DataManager dataManager;                         // DataManager 참조
+    [SerializeField] private cardManager cardManager;         // cardManager 참조
+    private DataManager dataManager;                          // DataManager 참조
+    private charController player;
 
     private List<Card> _allCards = new List<Card>();          // 카드 데이터 모음
 
@@ -20,6 +22,15 @@ public class deckSystem : MonoBehaviour
         dataManager = FindObjectOfType<DataManager>();
         _allCards = dataManager.cardDatabase;
         cardManager = FindObjectOfType<cardManager>();
+        if (cardManager == null)
+        {
+            cardManager = FindObjectOfType<cardManager>();
+            if (cardManager == null)
+            {
+                Debug.LogError("cardManager를 찾을 수 없습니다!");
+            }
+        }
+        player = FindObjectOfType<charController>();
         InitializeDeck();
     }
 
@@ -68,7 +79,7 @@ public class deckSystem : MonoBehaviour
     // 카드를 뽑는 메서드
     public void DrawCard(int amount)
     {
-        if (playerDeck.Count == 0)
+        if (playerDeck.Count <= 4)
         {
             if (usedDeck.Count > 0)
             {
@@ -124,12 +135,18 @@ public class deckSystem : MonoBehaviour
         GameObject cardObject = cardManager.inHandCards.Find(obj => obj.GetComponent<cardDisplay>().cardData == card);
         if(cardObject != null){
             Debug.Log($"카드 객체를 찾았습니다: {cardObject.name}");
+
+            if(player != null){
+                player.UseCost(card._cost);
+                Debug.Log($"플레이어가 {card._cost} 만큼 코스트를 사용하였습니다.");
+            }else {
+                Debug.LogWarning("player 참조가 null입니다. 코스트를 사용할 수 없습니다.");
+            }
             cardManager.inHandCards.Remove(cardObject);
             cardInHand.Remove(card);
             Debug.Log($"카드를 손에서 제거했습니다. 남은 카드 수: {cardManager.inHandCards.Count}");
             usedDeck.Add(card);
             Debug.Log($"카드를 사용한 더미에 추가했습니다. 사용한 더미 크기: {usedDeck.Count}");
-            
         }
         else{
             Debug.Log("카드가 손에 없습니다.");
@@ -162,6 +179,7 @@ public class deckSystem : MonoBehaviour
         }
         // 손에 있는 카드 목록을 비움
         cardManager.inHandCards.Clear();
+        cardInHand.Clear();
     }
 
     public int GetDeckSize()
@@ -237,6 +255,26 @@ public class deckSystem : MonoBehaviour
         // return null;
     }
 
+    private void DestroyCardObject(Card card)
+    {
+        if (cardManager == null)
+        {
+            Debug.LogError("cardManager가 null입니다!");
+            return;
+        }
 
-
+        if (cardManager.cardInstanceIDs.TryGetValue(card, out int instanceID))
+        {
+            GameObject cardObject = GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(go => go.GetInstanceID() == instanceID);
+            if (cardObject != null)
+            {
+                Destroy(cardObject);
+            }
+            cardManager.cardInstanceIDs.Remove(card);
+        }
+        else
+        {
+            Debug.LogWarning($"카드 {card.name}의 인스턴스 ID를 찾을 수 없습니다.");
+        }
+    }
 }
