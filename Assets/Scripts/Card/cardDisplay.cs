@@ -43,6 +43,12 @@ public class cardDisplay : MonoBehaviour
         // SetCardData(deckSystem.listUpCardInHand()[0]);
     }
 
+    // 매 프레임마다 호출되는 메서드
+    void Update() {  
+        // 카드 디스플레이 업데이트
+        updateCardDisplay();
+    }
+
     // 카드 디스플레이를 업데이트하는 메서드
     private void updateCardDisplay() {
         // 카드 비용 표시
@@ -67,12 +73,6 @@ public class cardDisplay : MonoBehaviour
         // 카드 설명의 폰트 크기를 조정
         AdjustFontSize(cardDescription, cardData._description, 0.18f, 0.33f);
     }    
-
-    // 매 프레임마다 호출되는 메서드
-    void Update() {  
-        // 카드 디스플레이 업데이트
-        updateCardDisplay();
-    }
 
     // 텍스트 컴포넌트의 폰트 크기를 자동으로 조정하는 메서드
     void AdjustFontSize(TextMeshProUGUI textComponent, string content, float min, float max) {

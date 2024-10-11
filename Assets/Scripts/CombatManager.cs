@@ -107,6 +107,7 @@ public class CombatManager : MonoBehaviour
     private IEnumerator PlayerTurn()
     {
         LogCombatAction("플레이어의 턴입니다.");
+        player.ResetBlock();
 
         // 적 준비
         Debug.Log("적 준비");

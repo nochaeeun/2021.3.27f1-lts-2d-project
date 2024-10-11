@@ -21,6 +21,6 @@ MonoBehaviour:
   _effectType2: 0
   _damage: 8
   _shield: 0
-  _description: Decreased by Soul 8, earning one card
+  _description: Decreased by Soul 8, drawing one card
   _effectMagnitude: 1
   _effectMagnitude2: 0

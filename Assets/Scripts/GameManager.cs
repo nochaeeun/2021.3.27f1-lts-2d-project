@@ -68,6 +68,10 @@ public class GameManager : MonoBehaviour
         StartCoroutine(combatManager.StartCombat());
     }
 
+    private void FixedUpdate(){
+        cardManager.UpdateHandVisual();
+    }
+
     // Update is called once per frame
     private void Update()
     {
