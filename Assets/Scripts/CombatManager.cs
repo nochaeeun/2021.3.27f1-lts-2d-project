@@ -31,7 +31,6 @@ public class CombatManager : MonoBehaviour
         uiManager = FindObjectOfType<UIManager>();
         enemy = FindObjectOfType<EnemyAi>();
         cardManager = FindObjectOfType<cardManager>();
-        Debug.Log("전투 초기화 완료");
         
         enemyObj = GameObject.FindWithTag("Enemy");
         playerObj = GameObject.FindWithTag("Player");
@@ -41,8 +40,6 @@ public class CombatManager : MonoBehaviour
         currentTurn = 0;
         isPlayerTurn = true;
 
-        Debug.Log("턴 초기화 완료");
-
         // 적 생성 (임시로 한 마리만 생성)
         // EnemyAi newEnemy = new EnemyAi(); // EnemyAi 클래스가 있다고 가정
         // enemies = new List<EnemyAi>();
@@ -51,25 +48,15 @@ public class CombatManager : MonoBehaviour
         enemy.CallEnemy();
         enemies.Add(enemy);
 
-        Debug.Log("적 생성 완료");
-
         // 플레이어 상태 초기화
         player.levelInitialize();
 
-        Debug.Log("플레이어 상태 초기화 완료");
-
         // UI 업데이트
         uiManager.UpdateCombatUI(player, enemies);
-
-        Debug.Log("UI 업데이트 완료");
-
         // 전투 시작 로그
         LogCombatAction("전투가 시작되었습니다.");
 
-        Debug.Log("전투 시작 로그 기록 완료");
-
         // 턴 관리 코루틴 시작
-        Debug.Log("턴 관리 코루틴 시작");
         // StartCoroutine(ManageTurns());
 
         // yield return new WaitUntil(() => IsCombatOver());
@@ -79,24 +66,21 @@ public class CombatManager : MonoBehaviour
     // 턴 관리 메서드
     private IEnumerator ManageTurns()
     {
-        Debug.Log($"턴 관리 메서드 시작 : {IsCombatOver()}");
         while (!IsCombatOver())
         {
-            currentTurn++;
-            LogCombatAction($"턴 {currentTurn} 시작");
+            
 
             if (isPlayerTurn)
             {
-                Debug.Log($"플레이어 턴 시작 : {isPlayerTurn}");
+                currentTurn++;
                 yield return StartCoroutine(PlayerTurn());
             }
             else
             {
-                Debug.Log($"적 턴 시작 : {isPlayerTurn}");
                 yield return StartCoroutine(EnemyTurn());
             }
 
-            isPlayerTurn = !isPlayerTurn; // 턴 종료 시 isPlayerTurn을 토글합니다.
+            // isPlayerTurn = !isPlayerTurn; // 턴 종료 시 isPlayerTurn을 토글합니다.
             yield return new WaitForSecondsRealtime(0.5f); // 턴 사이 짧은 대기 시간
         }
 
@@ -110,10 +94,8 @@ public class CombatManager : MonoBehaviour
         player.ResetBlock();
 
         // 적 준비
-        Debug.Log("적 준비");
         enemy.PrepareNextAction();
         
-        Debug.Log($"턴 시작 코스트 3 회복");
         if(currentTurn >= 2)
             player.GainCost(3);
 
@@ -124,15 +106,12 @@ public class CombatManager : MonoBehaviour
         // 플레이어 행동 처리
         bool turnEnded = false;
         getTurnEndedButtonDown = false;
-        Debug.Log($"getTurnEndedButtonDown : {getTurnEndedButtonDown}");
         while (!turnEnded)
         {
-            Debug.Log("플레이어 턴 중");
             // 플레이어의 입력을 기다림
             // yield return new WaitUntil(() => uiManager.IsPlayerTurnEnded());
             // yield return new WaitUntil(() => uiManager.CallEndTurn());
             yield return new WaitUntil(() => uiManager.IsTurnEnded());
-            Debug.Log($"플레이어 턴 코루틴 재개 종료 버튼 눌림 : {getTurnEndedButtonDown}");
             turnEnded = uiManager.IsTurnEnded();
 
             // 플레이어가 카드를 사용하는 부분
@@ -142,7 +121,6 @@ public class CombatManager : MonoBehaviour
                 player.deckSystem.EndTurn();
                 turnEnded = false;
                 getTurnEndedButtonDown = false;
-                Debug.Log("플레이어 턴 종료");
                 uiManager.ResetTurnEndStatus();
                 break;
             }
@@ -163,6 +141,8 @@ public class CombatManager : MonoBehaviour
         enemy.PrepareNextAction();
 
         LogCombatAction("적의 턴이 종료되었습니다.");
+
+        isPlayerTurn = true;
 
         yield return new WaitForSeconds(0.1f);
     }
@@ -222,7 +202,6 @@ public class CombatManager : MonoBehaviour
     public void ApplyEffect(string effectType, int magnitude, Card card)
     {
         // 다양한 효과 (버프/디버프 등) 적용 로직 구현
-        Debug.Log($"2번째 효과 여부 : {card._effectType2}");
         switch (effectType)
         {
             case "none":
@@ -241,7 +220,6 @@ public class CombatManager : MonoBehaviour
                 // player.deckSystem.DrawCard(magnitude);
                 cardManager.inHandCardData.Remove(card);
                 player.deckSystem.DrawSingleCard();
-                Debug.Log($"카드 수 : {cardManager.inHandCardData.Count}");
                 break;
             case "cost":
                 player.GainCost(magnitude); // 추후 다음턴 로직 추가
@@ -270,10 +248,8 @@ public class CombatManager : MonoBehaviour
     {
         // 카드 효과 적용 로직
         // 예: 데미지, 방어력 증가, 버프/디버프 등
-        Debug.Log($"카드 효과 적용: {card._cardType}");
         switch(card._cardType.ToString()){
                 case "attack":
-                    Debug.Log($"공격 데미지 : {card._damage}");
                     int damage = card._damage;
                     enemy.eTakeDamage(damage);
                     if(card._effectType != Card.EffectType.none){

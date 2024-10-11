@@ -64,8 +64,7 @@ public class charController : MonoBehaviour, ICharacter
         // 월드에 캐릭터가 진입할때 호출.
         // TODO: 캐릭터 초기화
         maxHealth = 50;
-        startHealth = 0;
-        currentHealth = startHealth;
+        currentHealth = 0;
         maxCost = 5;
         currentCost = 0;
         block = 0;
@@ -92,17 +91,23 @@ public class charController : MonoBehaviour, ICharacter
 
     public void TakeDamage(int amount)
     {
+        Debug.Log($"플레이어가 {amount}의 데미지를 받습니다.");
         int newDamage;
         // TODO: 데미지 처리
         // - 방어력 고려하여 실제 데미지 계산
         if(block > amount){
+            Debug.Log($"방어력이 충분합니다. 방어력: {block} -> {block - amount}");
             block -= amount;
         } else {
             newDamage = amount - block;
+            Debug.Log($"방어력이 부족합니다. 실제 데미지: {newDamage}");
             currentHealth += newDamage; // - 체력 감소
+            Debug.Log($"현재 체력: {currentHealth}");
             // - 사망 체크
-            if(isPlayerDie())
+            if(isPlayerDie()){
+                Debug.Log("플레이어가 사망했습니다.");
                 Die();
+            }
         }
     }
 

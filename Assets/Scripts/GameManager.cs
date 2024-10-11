@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
         deckSystem.InitializeDeck();
         playerManager.Initialize();
         // deckSystem.DrawCard(5);
-        Debug.Log("전투 시작");
         StartCoroutine(combatManager.StartCombat());
     }
 

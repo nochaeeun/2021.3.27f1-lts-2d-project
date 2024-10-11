@@ -82,10 +82,8 @@ public class deckSystem : MonoBehaviour
             playerDeck.RemoveAt(0);
             cardInHand.Add(drawnCard);
             cardManager.AddCardToHand(drawnCard);
-            Debug.Log($"카드를 손으로 한 장 이동: 현재 손의 카드 수={cardInHand.Count}, 남은 덱 카드 수={playerDeck.Count}");
             return drawnCard;
         } else {
-            Debug.LogWarning("덱에 카드가 없습니다. 사용한 카드 더미에서 카드를 덱으로 불러옵니다.");
             ResetDeck();
             Card drawnCard = playerDeck[0];
             cardInHand.Add(drawnCard);
@@ -111,19 +109,14 @@ public class deckSystem : MonoBehaviour
             }
         }
 
-        Debug.Log($"DrawCard 메서드 시작: amount={amount}, 현재 덱 카드 수={playerDeck.Count}");
         for (int i = 0; i < amount && playerDeck.Count > 0; i++)
         {
             Card drawnCard = playerDeck[0];
-            Debug.Log($"뽑은 카드: ID={drawnCard._cardID}, 이름={drawnCard._cardName}, 비용={drawnCard._cost}");
             cardInHand.Add(drawnCard);
             playerDeck.RemoveAt(0);
-            Debug.Log($"카드를 손으로 이동: 현재 손의 카드 수={cardInHand.Count}, 남은 덱 카드 수={playerDeck.Count}");
             // cardManager.AddCardToHand(drawnCard);
-            Debug.Log($"cardManager.AddCardToHand 호출 완료");
         }
-        Debug.Log($"DrawCard 메서드 종료: {amount}장의 카드를 뽑았습니다. 현재 손에 있는 카드: {cardInHand.Count}장, 남은 덱 카드 수: {playerDeck.Count}장");
-
+       
     }
 
     // 덱을 섞는 메서드
@@ -150,27 +143,20 @@ public class deckSystem : MonoBehaviour
     public void UseCard(Card card)
     {
         // 카드를 사용한 더미로 이동
-        Debug.Log($"UseCard 메서드 시작: 카드 ID={card._cardID}, 이름={card._cardName}");
         GameObject cardObject = cardManager.inHandCards.Find(obj => obj.GetComponent<cardDisplay>().cardData == card);
         if(cardObject != null){
-            Debug.Log($"카드 객체를 찾았습니다: {cardObject.name}");
-
             if(player != null){
                 player.UseCost(card._cost);
-                Debug.Log($"플레이어가 {card._cost} 만큼 코스트를 사용하였습니다.");
             }else {
                 Debug.LogWarning("player 참조가 null입니다. 코스트를 사용할 수 없습니다.");
             }
             cardManager.inHandCards.Remove(cardObject);
             cardInHand.Remove(card);
-            Debug.Log($"카드를 손에서 제거했습니다. 남은 카드 수: {cardManager.inHandCards.Count}");
             usedDeck.Add(card);
-            Debug.Log($"카드를 사용한 더미에 추가했습니다. 사용한 더미 크기: {usedDeck.Count}");
         }
         else{
             Debug.Log("카드가 손에 없습니다.");
         }
-        Debug.Log("UseCard 메서드 종료");
     }
 
     // 카드를 소멸 더미로 이동시키는 메서드

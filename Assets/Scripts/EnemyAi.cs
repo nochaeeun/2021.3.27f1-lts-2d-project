@@ -45,7 +45,6 @@ public class EnemyAi : MonoBehaviour, ICharacter
     public UIManager uiManager;
     public charController playerManager;
 
-
     public string Name;
     public int Health;
     public int Block;
@@ -61,20 +60,20 @@ public class EnemyAi : MonoBehaviour, ICharacter
 
     public void Start()
     {
-        // 외부 컨트롤러 초기화
+        InitializeControllers();
+    }
+
+    private void InitializeControllers()
+    {
         gameManager = FindObjectOfType<GameManager>();
         combatManager = FindObjectOfType<CombatManager>();
         uiManager = FindObjectOfType<UIManager>();
         playerManager = FindObjectOfType<charController>();
 
-        if(gameManager == null)
-            gameManager = new GameObject("GameManager").AddComponent<GameManager>();
-        if(combatManager == null)
-            combatManager = new GameObject("CombatManager").AddComponent<CombatManager>();
-        if(uiManager == null)
-            uiManager = new GameObject("UIManager").AddComponent<UIManager>();
-        if(playerManager == null)
-            playerManager = new GameObject("PlayerManager").AddComponent<charController>();
+        if(gameManager == null) gameManager = new GameObject("GameManager").AddComponent<GameManager>();
+        if(combatManager == null) combatManager = new GameObject("CombatManager").AddComponent<CombatManager>();
+        if(uiManager == null) uiManager = new GameObject("UIManager").AddComponent<UIManager>();
+        if(playerManager == null) playerManager = new GameObject("PlayerManager").AddComponent<charController>();
     }
 
     public void CallEnemy(){
@@ -90,97 +89,140 @@ public class EnemyAi : MonoBehaviour, ICharacter
             Name = "Red";
             Health = 40;
             Block = 0;
-            Debug.Log("적 행동 초기화 시작");
+            Debug.Log("EnemyAi: 적 행동 초기화 시작");
             Actions.Add(new Action("UnKnown1", 9, ActionType.Attack));
-            Debug.Log("UnKnown1 행동 추가됨: 공격력 9");
+            Debug.Log("EnemyAi: UnKnown1 행동 추가됨: 공격력 9");
+            Debug.Log(Actions.Count);
+            Debug.Log(Actions[0].ActionName);
             Actions.Add(new Action("UnKnown2", 11, ActionType.Attack));
-            Debug.Log("UnKnown2 행동 추가됨: 공격력 11");
+            Debug.Log("EnemyAi: UnKnown2 행동 추가됨: 공격력 11");
+            Debug.Log(Actions.Count);
+            Debug.Log(Actions[1].ActionName);
             Actions.Add(new Action("UnKnown3", 14, ActionType.Attack));
-            Debug.Log("UnKnown3 행동 추가됨: 공격력 14");
+            Debug.Log("EnemyAi: UnKnown3 행동 추가됨: 공격력 14");
+            Debug.Log(Actions.Count);
+            Debug.Log(Actions[2].ActionName);
             Actions.Add(new Action("UnKnown4", 15, ActionType.Attack));
-            Debug.Log("UnKnown4 행동 추가됨: 공격력 15");
+            Debug.Log("EnemyAi: UnKnown4 행동 추가됨: 공격력 15");
+            Debug.Log(Actions.Count);
+            Debug.Log(Actions[3].ActionName);
 
-            Debug.Log("특수 행동 리스트 초기화됨");
+            Debug.Log("EnemyAi: 특수 행동 리스트 초기화됨");
             SpecialActions.Add(new Action("UnKnown5", 2, ActionType.PlayerCost));
-            Debug.Log("특수 행동 UnKnown5 추가됨: 플레이어 코스트 2 감소");
-            Debug.Log("적 행동 초기화 완료");
+            Debug.Log(SpecialActions.Count);
+            Debug.Log(SpecialActions[0].ActionName);
+            Debug.Log("EnemyAi: 특수 행동 UnKnown5 추가됨: 플레이어 코스트 2 감소");
+            Debug.Log("EnemyAi: 적 행동 초기화 완료");
             break;
         }
+        Debug.Log("EnemyAi: Enemy 메서드 종료");
     }
 
     private Action nextAction;
 
     public void PerformAction(){
-        // 적의 전체 행동을 수행하는 메서드
+        Debug.Log("EnemyAi: PerformAction 메서드 시작");
+        Debug.Log($"EnemyAi: 다음 행동: {nextAction?.ActionName}");
         if(nextAction != null){
             ExecuteAction();
             nextAction = null;
         }
+        Debug.Log("EnemyAi: PerformAction 메서드 종료");
     }
 
     public void ExecuteAction(){
-        // 적의 행동을 수행하는 메서드 
+        Debug.Log("EnemyAi: ExecuteAction 메서드 시작");
         if(nextAction != null){
             switch(nextAction._type){
                 case ActionType.Attack:
-                break;
+                    Debug.Log($"EnemyAi: 플레이어에게 {nextAction._ePower} 데미지 공격");
+                    if(playerManager != null){
+                        playerManager.TakeDamage(nextAction._ePower);
+                    } else {
+                        Debug.LogError("EnemyAi: playerManager가 null입니다.");
+                    }
+                    break;
                 case ActionType.PlayerCost:
-                playerManager.UseCost(nextAction._ePower); // 플레이어 코스트 사용( 회수 )
-                break;
-                // next Time
+                    Debug.Log($"EnemyAi: 플레이어의 코스트 {nextAction._ePower} 감소");
+                    if(playerManager != null){
+                        playerManager.UseCost(nextAction._ePower);
+                    } else {
+                        Debug.LogError("EnemyAi: playerManager가 null입니다.");
+                    }
+                    break;
             }
         }
+        Debug.Log("EnemyAi: ExecuteAction 메서드 종료");
     }
+    
     public void UpdateIntention(){
-        // 적의 의도UI를 업데이트하는 메서드
+        Debug.Log("EnemyAi: UpdateIntention 메서드 시작");
         if(nextAction != null){
             Intention = nextAction._type;
+            Debug.Log($"EnemyAi: 다음 행동 의도 업데이트 - {Intention}");
         }
+        Debug.Log("EnemyAi: UpdateIntention 메서드 종료");
     }
+
     public void ChooseRandomAction(){
-        // 적의 다음 턴 랜덤 행동을 선택하는 메서드
+        Debug.Log("EnemyAi: ChooseRandomAction 메서드 시작");
         int maxActionIndex = Actions.Count + SpecialActions.Count;
         int randomIndex = Random.Range(0, maxActionIndex);
 
-        if(randomIndex < Actions.Count){
-            nextAction = Actions[randomIndex];
-        }
-        else{
-            nextAction = SpecialActions[randomIndex - Actions.Count];
-        }
+        nextAction = randomIndex < Actions.Count ? Actions[randomIndex] : SpecialActions[randomIndex - Actions.Count];
+        Debug.Log($"EnemyAi: {(randomIndex < Actions.Count ? "일반" : "특수")} 행동 선택 - {nextAction.ActionName}");
+        Debug.Log("EnemyAi: ChooseRandomAction 메서드 종료");
     }
 
     public void PrepareNextAction(){
+        Debug.Log("EnemyAi: PrepareNextAction 메서드 시작");
         ChooseRandomAction();
         UpdateIntention();
+        Debug.Log("EnemyAi: PrepareNextAction 메서드 종료");
     }
 
     public bool IsAlive(){
+        Debug.Log($"EnemyAi: IsAlive 체크 - 현재 체력: {Health}");
         return Health > 0;
     }
 
     public void eTakeDamage(int amount){
-        int newDamage;
-        if(Block > amount){
+        Debug.Log($"EnemyAi: eTakeDamage 메서드 시작 - 받은 데미지: {amount}");
+        if(Block >= amount){
             Block -= amount;
-        }else {
-            newDamage = amount - Block;
+            Debug.Log($"EnemyAi: 방어력으로 데미지 흡수 - 남은 방어력: {Block}");
+        } else {
+            int newDamage = amount - Block;
             Health -= newDamage;
+            Block = 0;
+            Debug.Log($"EnemyAi: 데미지 받음 - 현재 체력: {Health}");
             if(Health <= 0){
                 Health = 0;
+                Debug.Log("EnemyAi: 체력이 0 이하로 떨어짐");
                 Die();
             }
         }
+        Debug.Log("EnemyAi: eTakeDamage 메서드 종료");
     }
+
     public void eGainBlock(int amount){
+        Debug.Log($"EnemyAi: eGainBlock 메서드 - 얻은 방어력: {amount}");
         Block += amount;
+        Debug.Log($"EnemyAi: 현재 방어력: {Block}");
     }
 
     public void Die(){
+        Debug.Log("EnemyAi: Die 메서드 시작");
         // TODO: 적 사망 처리
         if(Health <= 0){
-            gameManager.currentState = GameManager.GameState.Win;
+            Debug.Log("EnemyAi: 적 사망 - 게임 상태를 Win으로 변경");
+            if(gameManager != null){
+                gameManager.currentState = GameManager.GameState.Win;
+            } else {
+                Debug.LogError("EnemyAi: gameManager가 null입니다.");
+            }
         }
+        Debug.Log("EnemyAi: Die 메서드 종료");
     }
 
 
@@ -188,5 +230,3 @@ public class EnemyAi : MonoBehaviour, ICharacter
         // 적의 특수 능력을 사용하는 메서드
     // }
 }
-
-
