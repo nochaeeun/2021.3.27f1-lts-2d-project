@@ -110,6 +110,10 @@ public class charController : MonoBehaviour, ICharacter
         return block;
     }
 
+    public void ResetBlock(){
+        block = 0;
+    }
+
     public void GainBlock(int amount)
     {
         // TODO: 방어력 증가
