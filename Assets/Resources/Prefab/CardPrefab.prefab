@@ -1114,6 +1114,9 @@ MonoBehaviour:
   playArrow: {fileID: 7314933436326897643}
   cardPlayThreshold: 0.4
   combatManager: {fileID: 0}
+  deckSystem: {fileID: 0}
+  cardManager: {fileID: 0}
+  player: {fileID: 0}
   cam: {fileID: 0}
 --- !u!1 &8194627309472419538
 GameObject:
