@@ -18,6 +18,8 @@ public class cardManager : MonoBehaviour
 
     public float cardSpread = 7.5f;
     public float cardSpacing = -166f;
+    [SerializeField] private float newCardSpread;
+    [SerializeField] private float newCardSpacing;
     public float verticalSpacing = 49f;
 
     public List<GameObject> inHandCards = new List<GameObject>();
@@ -104,15 +106,17 @@ public class cardManager : MonoBehaviour
         }
         else
         {
-            cardSpread = 7.5f * 5f / cardCount;
-            cardSpacing = -166f * 5f / cardCount;
+            // cardSpread = 7.5f * 5f / cardCount;
+            newCardSpread = cardSpread * 5f / cardCount;
+            // cardSpacing = -166f * 5f / cardCount;
+            newCardSpacing = cardSpacing * 5f / cardCount;
 
             for (int i = 0; i < cardCount; i++)
             {
-                float rotationAngle = (cardSpread * (i - (cardCount - 1) / 2f));
+                float rotationAngle = (newCardSpread * (i - (cardCount - 1) / 2f));
                 inHandCards[i].transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);
 
-                float horizontalOffset = (cardSpacing * (i - (cardCount - 1) / 2f));
+                float horizontalOffset = (newCardSpacing * (i - (cardCount - 1) / 2f));
                 float normalPosition = (2f * i / (cardCount - 1) - 1f);
                 float verticalOffset = verticalSpacing * (1f - normalPosition * normalPosition);
                 inHandCards[i].transform.localPosition = new Vector3(horizontalOffset, verticalOffset, 0f);

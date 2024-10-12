@@ -52,7 +52,7 @@ public class CombatManager : MonoBehaviour
         player.levelInitialize();
 
         // UI 업데이트
-        uiManager.UpdateCombatUI(player, enemies);
+        // uiManager.UpdateCombatUI(player, enemies);
         // 전투 시작 로그
         LogCombatAction("전투가 시작되었습니다.");
 
@@ -279,6 +279,14 @@ public class CombatManager : MonoBehaviour
             player.deckSystem.UseCard(card);
         }
         
+    }
+
+    public List<EnemyAi> ListUPEnemies(){
+        return enemies;
+    }
+
+    public int GetTurnCount(){
+        return currentTurn;
     }
 
 

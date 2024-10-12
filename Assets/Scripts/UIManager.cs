@@ -2,21 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private Button turnEndButton;
+    [SerializeField] private TextMeshProUGUI playerHpText;
+    [SerializeField] private TextMeshProUGUI playerBlockText;
+    [SerializeField] private TextMeshProUGUI enemyHpText;
+    [SerializeField] private TextMeshProUGUI enemyBlockText;
+    [SerializeField] private TextMeshProUGUI turnCountText;
+    [SerializeField] private TextMeshProUGUI enemyNameText;
+    [SerializeField] private TextMeshProUGUI playerCostText;
+    [SerializeField] private TextMeshProUGUI enemyInfoText;
 
     private Sprite[] enemyIntention;
 
     private charController player;
     private CombatManager combatManager;
+    private EnemyAi enemy;
+
+    private int enemyMaxHp = 0;
 
     private void Start()
     {
         enemyIntention = Resources.LoadAll<Sprite>("EnemyIntention");
         player = FindObjectOfType<charController>();
         combatManager = FindObjectOfType<CombatManager>();
+        enemy = FindObjectOfType<EnemyAi>();
 
         if (turnEndButton != null)
         {
@@ -29,14 +42,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void FixedUpdate()
     {
-        
+        UpdateCombatUI(player, combatManager.ListUPEnemies());
     }
 
     public void UpdateCombatUI(charController player, List<EnemyAi> enemies){
         // 플레이어 스텟 업데이트
+        playerHpText.text = $"{player.playerHpCheck()} / {player.MaxHealthCheck()}";
+        playerBlockText.text = $"{player.getBlock()} / {player.getBlock()}";
+        playerCostText.text = $"{player.playerCostCheck()} / 5";
         // 적 스텟 업데이트
+        if(enemyMaxHp == 0) enemyMaxHp = enemies[0].Health;
+        enemyInfoText.text = $"야생의 테스트용 보스 {enemies[0].Name}가 나타났다!";
+        enemyNameText.text = enemies[0].Name;
+        enemyHpText.text = $"{enemies[0].Health} / {enemyMaxHp}";
+        enemyBlockText.text = $"{enemies[0].Block} / {enemies[0].Block}";
+        // 턴 카운트 업데이트
+        turnCountText.text = $"{combatManager.GetTurnCount()} 턴";
     }
 
     public bool CallEndTurn(bool result){
