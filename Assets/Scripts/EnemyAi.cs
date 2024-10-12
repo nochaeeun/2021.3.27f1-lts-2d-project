@@ -119,6 +119,7 @@ public class EnemyAi : MonoBehaviour, ICharacter
     }
 
     private Action nextAction;
+    public Action NextAction => nextAction;
 
     public void PerformAction(){
         Debug.Log("EnemyAi: PerformAction 메서드 시작");
@@ -162,6 +163,11 @@ public class EnemyAi : MonoBehaviour, ICharacter
             Debug.Log($"EnemyAi: 다음 행동 의도 업데이트 - {Intention}");
         }
         Debug.Log("EnemyAi: UpdateIntention 메서드 종료");
+    }
+
+    public void UpdateIntentionUI(){
+        uiManager.UpdateEnemyIntention(Intention);
+
     }
 
     public void ChooseRandomAction(){

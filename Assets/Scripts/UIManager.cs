@@ -15,6 +15,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI enemyNameText;
     [SerializeField] private TextMeshProUGUI playerCostText;
     [SerializeField] private TextMeshProUGUI enemyInfoText;
+    [SerializeField] private GameObject enemyIntentionAttackIcon;
+    [SerializeField] private GameObject enemyIntentionCostIcon;
+    [SerializeField] private GameObject enemyIntentionShieldIcon;
+    [SerializeField] private TextMeshProUGUI enemyIntentionAmountText;
 
     private Sprite[] enemyIntention;
 
@@ -45,6 +49,7 @@ public class UIManager : MonoBehaviour
     public void FixedUpdate()
     {
         UpdateCombatUI(player, combatManager.ListUPEnemies());
+        enemy.UpdateIntentionUI();
     }
 
     public void UpdateCombatUI(charController player, List<EnemyAi> enemies){
@@ -106,6 +111,30 @@ public class UIManager : MonoBehaviour
     {
         isTurnEnded = false;
         Debug.Log("턴 종료 상태가 초기화되었습니다.");
+    }
+
+    public void UpdateEnemyIntention(ActionType intention){
+        switch(intention){
+            case ActionType.Attack:
+                enemyIntentionAttackIcon.SetActive(true);
+                enemyIntentionCostIcon.SetActive(false);
+                enemyIntentionShieldIcon.SetActive(false);
+                enemyIntentionAmountText.gameObject.SetActive(true);
+                enemyIntentionAmountText.text = $"{enemy.NextAction._ePower}";
+                break;
+            case ActionType.PlayerCost:
+                enemyIntentionCostIcon.SetActive(true);
+                enemyIntentionAttackIcon.SetActive(false);
+                enemyIntentionShieldIcon.SetActive(false);
+                enemyIntentionAmountText.gameObject.SetActive(false);
+                break;
+            case ActionType.Defence:
+                enemyIntentionShieldIcon.SetActive(true);
+                enemyIntentionAttackIcon.SetActive(false);
+                enemyIntentionCostIcon.SetActive(false);
+                enemyIntentionAmountText.gameObject.SetActive(false);
+                break;
+        }
     }
 
     // CombatManager의 플레이어 턴 관리에서 사용될 WaitUntil에 넣을 문구:
