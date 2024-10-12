@@ -56,7 +56,7 @@ public class cardDisplay : MonoBehaviour
         // 카드 이름 표시
         cardName.text = cardData._cardName;
         // 카드 이름의 폰트 크기를 조정
-        AdjustFontSize(cardName, cardData._cardName, 0.24f, 0.36f);
+        //AdjustFontSize(cardName, cardData._cardName, 0.24f, 0.36f);
 
         // 카드 일러스트 설정
         for (int i = cardIndex; i < cardIllust.Length; i++){
@@ -71,7 +71,7 @@ public class cardDisplay : MonoBehaviour
         // 카드 설명 표시
         cardDescription.text = cardData._description;
         // 카드 설명의 폰트 크기를 조정
-        AdjustFontSize(cardDescription, cardData._description, 0.18f, 0.33f);
+        //AdjustFontSize(cardDescription, cardData._description, 0.18f, 0.33f);
     }    
 
     // 텍스트 컴포넌트의 폰트 크기를 자동으로 조정하는 메서드
