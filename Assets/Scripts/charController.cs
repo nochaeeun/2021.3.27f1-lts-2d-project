@@ -114,6 +114,15 @@ public class charController : MonoBehaviour, ICharacter
     public int getBlock(){
         return block;
     }
+    public int playerCostCheck(){
+        return currentCost;
+    }
+    public int playerHpCheck(){
+        return currentHealth;
+    }
+    public int MaxHealthCheck(){
+        return maxHealth;
+    }
 
     public void ResetBlock(){
         block = 0;
@@ -241,8 +250,5 @@ public class charController : MonoBehaviour, ICharacter
             return true;
         }
         return false;
-    }
-    public int playerCostCheck(){
-        return currentCost;
     }
 }
