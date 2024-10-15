@@ -44,6 +44,7 @@ public class EnemyAi : MonoBehaviour, ICharacter
     public CombatManager combatManager;
     public UIManager uiManager;
     public charController playerManager;
+    public TooltipSystem tooltip;
 
     public string Name;
     public int Health;
@@ -69,6 +70,7 @@ public class EnemyAi : MonoBehaviour, ICharacter
         combatManager = FindObjectOfType<CombatManager>();
         uiManager = FindObjectOfType<UIManager>();
         playerManager = FindObjectOfType<charController>();
+        tooltip = FindObjectOfType<TooltipSystem>();
 
         if(gameManager == null) gameManager = new GameObject("GameManager").AddComponent<GameManager>();
         if(combatManager == null) combatManager = new GameObject("CombatManager").AddComponent<CombatManager>();
@@ -168,6 +170,7 @@ public class EnemyAi : MonoBehaviour, ICharacter
     public void UpdateIntentionUI(){
         uiManager.UpdateEnemyIntention(Intention);
 
+        tooltip.SetupToolTip(Intention);
     }
 
     public void ChooseRandomAction(){
